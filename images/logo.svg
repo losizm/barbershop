@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright 2021 Carlos Conyers
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<svg version="1.1"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xml:space="preserve"
+     x="0"
+     y="0"
+     width="32"
+     height="64"
+     viewBox="0 0 50 100">
+  <title>Barbershop</title>
+
+  <g id="barbershop-outline" style="stroke: #ddd; stroke-width: 4px; stroke-linejoin: round; fill: none;">
+    <circle cx="25" cy="8" r="4"/>
+    <path d="M 15,17 Q 25,3 35,17 h 3 v 6 h -2 v 60 h 2 v 6 h -3 Q 25,103 15,89 h -3 v -6 h 2 v -60 h -2 v -6 h 3 Z"/>
+  </g>
+
+  <g id="barbershop-shaft">
+    <rect id="barbershop-shaft-main" x="15" y="23" width="20" height="60" style="stroke: #111; stroke-width: 0.1; fill: #111;"/>
+
+    <g id="barbershop-shaft-stripes">
+      <g id="barbershop-shaft-stripes-red" style="stroke: none; fill: #813;">
+        <path d="M 15,39 Q 30,30 35,30 L 35,37 Q 30,37 15,47"/>
+        <path d="M 15,59 Q 30,50 35,50 L 35,57 Q 30,57 15,67"/>
+        <path d="M 15,79 Q 30,70 35,70 L 35,77 Q 30,77 15,87"/>
+      </g>
+
+      <g id="barbershop-shaft-stripes-blue" style="stroke: none; fill: #138;">
+        <path d="M 15,32 Q 30,22 35,22 L 35,29 Q 30,29 15,39"/>
+        <path d="M 15,52 Q 30,42 35,42 L 35,49 Q 30,49 15,59"/>
+        <path d="M 15,72 Q 30,62 35,62 L 35,69 Q 30,69 15,79"/>
+      </g>
+    </g>
+  </g>
+
+  <g id="barbershop-glass">
+    <rect id="barbershop-glass-main" x="14" y="23" width="22" height="60" style="stroke: #111; stroke-width: 0.25; fill: #9ff; fill-opacity: 0.15;"/>
+    <rect id="barbershop-glass-glare" x="28" y="23" width="4" height="60" style="stroke: none; fill: #fff; fill-opacity: 0.20;"/>
+  </g>
+
+  <g id="barbershop-caps" style="stroke: #111; stroke-width: 0.5; fill: #335;">
+    <circle cx="25" cy="8" r="4"/>
+
+    <rect x="12" y="17" width="26" height="6"/>
+    <rect x="12" y="83" width="26" height="6"/>
+
+    <path d="M 15,17 Q 25,3   35,17"/>
+    <path d="M 15,89 Q 25,103 35,89"/>
+  </g>
+</svg>
