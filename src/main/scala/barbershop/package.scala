@@ -25,3 +25,6 @@ extension (config: Config)
       .toBytes
       .min(Int.MaxValue)
       .toInt
+
+  private def hasPathAny(path: String, more: String*): Boolean =
+    config.hasPath(path) || more.exists(config.hasPath)

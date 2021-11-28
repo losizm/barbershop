@@ -20,8 +20,6 @@ import barbershop.logging.Logger
 
 import com.typesafe.config.Config
 
-import java.io.File
-
 import little.config.given
 
 import scala.language.implicitConversions
@@ -84,10 +82,6 @@ class Server(config: Config): //
     if server != null then
       try server.close() finally server = null
   }
-
-  extension (config: Config)
-    private def hasPathAny(path: String, more: String*): Boolean =
-      config.hasPath(path) || more.exists(config.hasPath)
 
   extension (app: ServerApplication)
     private def configureLogger(): ServerApplication =

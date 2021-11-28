@@ -33,11 +33,11 @@ import scala.collection.concurrent.TrieMap
 import scala.language.implicitConversions
 import scala.util.Try
 
-import scamper.http.{ BodyParser, HttpRequest, QueryString }
+import scamper.http.{ BodyParser, HttpRequest, QueryString, stringToUri }
 import scamper.http.ResponseStatus.Registry.*
-import scamper.http.headers.Location
+import scamper.http.headers.{ ContentType, Location }
 import scamper.http.server.{ *, given }
-import scamper.http.stringToUri
+import scamper.http.types.MediaType
 
 /**
  * Defines web API.
@@ -112,7 +112,12 @@ class Api(config: Config) extends RoutingApplication:
     }
 
   private def text(using req: HttpRequest): String =
-    Try(req.as[String]).getOrElse(throw CannotReadComment("Cannot read comment"))
+    req.getContentType.forall(isTextPlain) match
+      case true  => req.as[String]
+      case false => throw CannotReadComment("Cannot read comment")
+
+  private def isTextPlain(mediaType: MediaType): Boolean =
+    mediaType.isText && mediaType.subtype == "plain"
 
   private def show[T](time: Option[T]): String =
     time.map(_.toString).getOrElse("[]")

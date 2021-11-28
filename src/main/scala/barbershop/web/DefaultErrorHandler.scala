@@ -36,7 +36,7 @@ object DefaultErrorHandler extends ErrorHandler:
   def apply(req: HttpRequest): PartialFunction[Throwable, HttpResponse] =
     case err: ParameterNotFound       => BadRequest(Json.toJson(err))
     case err: ParameterNotConvertible => BadRequest(Json.toJson(err))
-    case err: CannotReadComment       => BadRequest(Json.toJson(err))
+    case err: CannotReadComment       => UnsupportedMediaType(Json.toJson(err))
     case err: ReadLimitExceeded       => PayloadTooLarge(Json.toJson(err))
     case err: EntityTooLarge          => PayloadTooLarge(Json.toJson(err))
     case err =>

@@ -16,14 +16,16 @@
 package barbershop
 package web
 
+import grapple.json.{ JsonObject, JsonValue }
+
 import java.time.Instant
 import java.util.concurrent.atomic.AtomicReference
 
 import scala.language.implicitConversions
 
-import scamper.http.{ ResponseStatus, given }
+import scamper.http.{ HttpResponse, ResponseStatus, given }
 import scamper.http.client.HttpClient
-import ResponseStatus.Registry.{ Created, NoContent, NotFound, Ok }
+import ResponseStatus.Registry.*
 
 import Implicits.given
 
@@ -175,6 +177,22 @@ class ServerSpec extends org.scalatest.flatspec.AnyFlatSpec:
       2L -> "This is an updated comment.",
       3L -> "This is another new comment."
     )
+
+    info("verify comment is too big")
+    client.post(s"$apiUrl/comments", body = "This message is to big!!" * 100) { res =>
+      assert(res.status == PayloadTooLarge)
+      assert(res.error.getString("type") == "CommentTooBig")
+    }
+
+    info("verify comment is not readable")
+    client.post(
+      s"$apiUrl/comments",
+      headers = Seq("Content-Type: application/xml"),
+      body = "<comment>This is a comment.</comment>"
+    ) { res =>
+      assert(res.status == UnsupportedMediaType)
+      assert(res.error.getString("type") == "CannotReadComment")
+    }
   }
 
   private def withServer[T](op: Server => T): T =
@@ -208,3 +226,6 @@ class ServerSpec extends org.scalatest.flatspec.AnyFlatSpec:
         assert(left.text == right._2)
       }
     }
+
+  extension (res: HttpResponse)
+    def error: JsonObject = res.as[JsonValue].asInstanceOf[JsonObject]
