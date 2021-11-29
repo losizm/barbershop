@@ -55,7 +55,7 @@ object Implicits:
       .build()
 
   /** Parses HTTP message body to string. */
-  given textBodyParser: BodyParser[String] = BodyParser.text(Int.MaxValue)
+  given stringBodyParser: BodyParser[String] = BodyParser.string(Int.MaxValue)
 
   /** Parses HTTP message body to JSON value. */
   given jsonBodyParser: BodyParser[JsonValue] = msg => Json.parse(msg.as[String])

@@ -54,7 +54,7 @@ class Api(config: Config) extends RoutingApplication:
   private val comments = TrieMap[Long, Comment]()
   private val count    = AtomicLong(0)
 
-  private given BodyParser[String] = BodyParser.text(config.getMemorySizeInt("comment.maxLength"))
+  private given BodyParser[String] = BodyParser.string(config.getMemorySizeInt("comment.maxLength"))
 
   /** Applies API to supplied router. */
   def apply(router: Router): Unit =
@@ -112,12 +112,9 @@ class Api(config: Config) extends RoutingApplication:
     }
 
   private def text(using req: HttpRequest): String =
-    req.getContentType.forall(isTextPlain) match
+    req.getContentType.forall(_.fullName == "text/plain") match
       case true  => req.as[String]
       case false => throw CannotReadComment("Cannot read comment")
-
-  private def isTextPlain(mediaType: MediaType): Boolean =
-    mediaType.isText && mediaType.subtype == "plain"
 
   private def show[T](time: Option[T]): String =
     time.map(_.toString).getOrElse("[]")
