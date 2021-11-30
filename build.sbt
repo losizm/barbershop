@@ -1,6 +1,6 @@
 organization := "com.github.losizm"
 name         := "barbershop"
-version      := "0.1.0"
+version      := "0.2.0"
 
 scalaVersion  := "3.1.0"
 scalacOptions := Seq("-deprecation", "-feature", "-new-syntax", "-Xfatal-warnings", "-Yno-experimental")
