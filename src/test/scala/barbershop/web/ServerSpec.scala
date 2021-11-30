@@ -89,14 +89,28 @@ class ServerSpec extends org.scalatest.flatspec.AnyFlatSpec:
       3L -> "This is another new comment."
     )
 
-    info("verify comments in range (includes first two comments)")
+    info("verify comments in id range (includes first two comments)")
+    verifyComments(
+      s"$apiUrl/comments?minId=1&maxId=2",
+      1L -> "Hello, barbershop!",
+      2L -> "This is a new comment."
+    )
+
+    info("verify comments in id range (includes last two comments)")
+    verifyComments(
+      s"$apiUrl/comments?minId=2&maxId=3",
+      2L -> "This is a new comment.",
+      3L -> "This is another new comment."
+    )
+
+    info("verify comments in time range (includes first two comments)")
     verifyComments(
       s"$apiUrl/comments?minTime=${time1.get.toEpochMilli}&maxTime=${time2.get.toEpochMilli}",
       1L -> "Hello, barbershop!",
       2L -> "This is a new comment."
     )
 
-    info("verify comments in range (includes last two comments)")
+    info("verify comments in time range (includes last two comments)")
     verifyComments(
       s"$apiUrl/comments?minTime=${time2.get.toEpochMilli}&maxTime=${time3.get.toEpochMilli}",
       2L -> "This is a new comment.",
@@ -133,14 +147,14 @@ class ServerSpec extends org.scalatest.flatspec.AnyFlatSpec:
       3L -> "This is another new comment."
     )
 
-    info("verify comments in range (includes first and last comments)")
+    info("verify comments in time range (includes first and last comments)")
     verifyComments(
       s"$apiUrl/comments?minTime=${time1.get.toEpochMilli}&maxTime=${time3.get.toEpochMilli}",
       1L -> "Hello, barbershop!",
       3L -> "This is another new comment."
     )
 
-    info("verify comments in range (includes last two comments)")
+    info("verify comments in time range (includes last two comments)")
     verifyComments(
       s"$apiUrl/comments?minTime=${time3.get.toEpochMilli}",
       2L -> "This is an updated comment.",

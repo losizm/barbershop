@@ -122,10 +122,12 @@ Response body is a JSON array.
 
 The following query parameters may be supplied in URL to filter comments:
 
-* `minTime` - Sets lower bound on comment time; supplied as Epoch milliseconds or timestamp formatted as `yyyy-MM-ddTmm:hh:ssZ`
-* `minTime` - Sets upper bound on comment time; supplied as Epoch milliseconds or timestamp formatted as `yyyy-MM-ddTmm:hh:ssZ`
-* `offset` - Drops specified number of leading comments
-* `limit` - Limits to specified number of leading comments after applying `offset`
+*  `minId` &ndash; lower bound of comment identifier
+*  `maxId` &ndash; upper bound of comment identifier
+*  `minTime` &ndash; lower bound of comment time; supplied as Epoch milliseconds or timestamp formatted as `yyyy-MM-ddTmm:hh:ssZ`
+*  `maxTime` &ndash; upper bound of comment time; supplied as Epoch milliseconds or timestamp formatted as `yyyy-MM-ddTmm:hh:ssZ`
+*  `offset` &ndash; number of leading comments to drop
+*  `limit` &ndash; maximum number of comments to list
 
 **To update a comment:**
 ```sh
