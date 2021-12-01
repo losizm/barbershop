@@ -131,7 +131,7 @@ The following query parameters may be supplied in URL to filter comments:
 
 **To update a comment:**
 ```sh
-curl -X PUT -H'Content-Type: plain/text' -d 'HELLO, BARBERSHOP!' http://localhost:8080/api/comments/1
+curl -X PUT -H'Content-Type: text/plain' -d 'HELLO, BARBERSHOP!' http://localhost:8080/api/comments/1
 ```
 
 **To delete a comment:**
