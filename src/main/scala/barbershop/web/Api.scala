@@ -22,13 +22,11 @@ import barbershop.web.Implicits.{ *, given }
 import com.typesafe.config.Config
 
 import grapple.json.Json
-import grapple.json.Implicits.given
+import grapple.json.Implicits.iterableToJsonArray
 
 import little.config.{ ConfigExt, stringDelegate }
 
-import scala.language.implicitConversions
-
-import scamper.http.{ BodyParser, HttpRequest, stringToUri }
+import scamper.http.{ BodyParser, HttpRequest, Uri }
 import scamper.http.ResponseStatus.Registry.*
 import scamper.http.headers.{ ContentType, Location }
 import scamper.http.server.{ *, given }
@@ -66,7 +64,7 @@ class Api(config: Config) extends RoutingApplication:
     router.post("/comments") { implicit req =>
       val id = comments.add(text)
       logger.debug(s"Comment added: id=$id")
-      Created().setLocation(router.toAbsolutePath(s"/comments/$id"))
+      Created().setLocation(Uri(router.toAbsolutePath(s"/comments/$id")))
     }
 
     router.get("/comments/:id") { req =>

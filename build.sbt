@@ -16,7 +16,7 @@ libraryDependencies := Seq(
   "com.github.losizm" %% "grapple"         % "9.0.0",
   "com.github.losizm" %% "little-config"   % "2.0.0",
   "com.github.losizm" %% "little-io"       % "6.0.0",
-  "com.github.losizm" %% "scamper"         % "28.0.0",
+  "com.github.losizm" %% "scamper"         % "28.1.0",
   "com.typesafe"      %  "config"          % "1.4.1",
   "org.scalatest"     %% "scalatest"       % "3.2.10" % Test
 )
