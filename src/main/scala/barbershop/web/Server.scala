@@ -135,6 +135,7 @@ class Server(config: Config): //
         .get(config.getString("server.alivePath"))(_ => Ok())
         .route(config.getString("api.mountPath"))(Api(config.getConfig("api")))
         .files(config.getString("ui.mountPath"), config.getFile("ui.sourceDirectory"), "index.html")
+        .outgoing(ContentEncodingFilter)
         .outgoing(ResponseLogger)
         .recover(DefaultErrorHandler)
 
