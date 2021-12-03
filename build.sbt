@@ -1,6 +1,8 @@
 organization := "com.github.losizm"
 name         := "barbershop"
-version      := "0.2.0"
+version      := "0.3.0"
+description  := "Example application using Scamper as web application framework"
+maintainer   := "carlos.conyers@hotmail.com"
 
 scalaVersion  := "3.1.0"
 scalacOptions := Seq("-deprecation", "-feature", "-new-syntax", "-Xfatal-warnings", "-Yno-experimental")
