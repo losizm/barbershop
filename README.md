@@ -1,6 +1,6 @@
 # Barbershop
 
-**Barbershop** is a reference implementation for using [Scamper](https://github.com/losizm/scamper/)
+**Barbershop** is an example application using [Scamper](https://github.com/losizm/scamper/)
 as a web application framework.
 
 ## Getting Started
@@ -19,61 +19,62 @@ the executable path:
 
 ## Building Application
 
-**Barbershop** uses the [sbt-native-packager](https://www.scala-sbt.org/sbt-native-packager)
-plugin to build the application package.
+The project uses the [sbt-native-packager](https://www.scala-sbt.org/sbt-native-packager)
+plugin.
+
+To build the application package, run the following command in the project directory:
 
 ```sh
 sbt packageZipTarball
 ```
 
-The packager builds a compressed tarball at `[PROJECT]/target/universal/barbershop-[RELEASE].tgz`.
+The command builds a compressed tarball at `[PROJECT_DIR]/target/universal/barbershop-[RELEASE].tgz`.
 
 ## Installing Application
 
-To install, simply unpackage application to an appropriate directory:
+To install, simply untar the application package to a location of your choosing:
 
 ```sh
-tar -C [INSTALL_DIRECTORY] -xvf [PROJECT]/target/universal/barbershop-[RELEASE].tgz
+tar -C [INSTALL_DIR] -xvf [PROJECT_DIR]/target/universal/barbershop-[RELEASE].tgz
 ```
 
 ## Configuring Application
 
-The configuration file is located at `[INSTALL_DIRECTORY]/conf/application.conf`.
-This file supplies only a subset of configuration, which includes some basic
-settings as shown below.
+The configuration file is located at `[INSTALL_DIR]/conf/application.conf`. This
+file supplies only a subset of configuration, which includes some basic settings
+as shown below.
 
 ```conf
 barbershop.server.host = 0.0.0.0
 barbershop.server.port = 9999
 barbershop.server.key = null
 barbershop.server.certificate = null
-barbershop.server.token = null
 
 include "overrides.conf"
 ```
 
-The file can be edited to include more settings. Or, alternatively, another file
+The file can be edited to include more settings. Alternatively, another file
 named `overrides.conf` can be created in the same directory to supply additional
 configuration.
 
-See also [reference.conf](src/main/resources/reference.conf) for the complete
-set of configuration.
+See also [reference.conf](src/main/resources/reference.conf) for a complete set
+of configuration.
 
 ## Running Application
 
-The startup script is located at `[INSTALL_DIRECTORY]/bin/barbershop`.
+The startup script is located at `[INSTALL_DIR]/bin/barbershop`.
 
 To start the application, simply run the script:
 
 ```sh
-[INSTALL_DIRECTORY]/bin/barbershop
+[INSTALL_DIR]/bin/barbershop
 ```
 
-Or, to start the application while also overriding any number of configuration
-settings, supply the key/value pairs as system properties:
+Or, to start the application while also overriding configuration, you may supply
+any number of the key/value pairs as system properties:
 
 ```sh
-[INSTALL_DIRECTORY]/bin/barbershop -D'barbershop.server.host=localhost' -D'barbershop.server.port=8080'
+[INSTALL_DIR]/bin/barbershop -D'barbershop.server.host=localhost' -D'barbershop.server.port=8080'
 ```
 
 A successful startup prints something like the following to the terminal:
@@ -92,7 +93,7 @@ A successful startup prints something like the following to the terminal:
 [2021-11-24T03:36:48.449-05:00][INFO] barbershop.web.Server - localhost:8080 - Server is up and running
 ```
 
-And, a PID file is created at `[INSTALL_DIRECTORY]/barbershop.pid`.
+And, a PID file is created at `[INSTALL_DIR]/barbershop.pid`.
 
 ### How to Use REST API
 
@@ -101,7 +102,7 @@ The application implements a REST API for managing arbitrary comments.
 **To create a comment:**
 
 ```sh
-curl -i -X POST -H'Content-Type: plain/text' -d 'Hello, barbershop!' http://localhost:8080/api/comments
+curl -i -X POST -H'Content-Type: text/plain' -d 'Hello, barbershop!' http://localhost:8080/api/comments
 ```
 
 The newly created comment's URI is returned in the **Location** header.
@@ -139,7 +140,7 @@ curl -X PUT -H'Content-Type: text/plain' -d 'HELLO, BARBERSHOP!' http://localhos
 curl -X DELETE http://localhost:8080/api/comments/1
 ```
 
-### Visit Comments Page
+### Comments Page
 
 To view the single-page application, point your browser to
 [http://localhost:8080/ui/comments/index.html](http://localhost:8080/ui/comments/index.html).
@@ -156,7 +157,7 @@ disappear from the list.
 The PID file can be used to stop the application as follows:
 
 ```sh
-kill "$(< [INSTALL_DIRECTORY]/barbershop.pid)"
+kill "$(< [INSTALL_DIR]/barbershop.pid)"
 ```
 
 Or, simply press `Ctrl-C` in the terminal in which the application is running.
