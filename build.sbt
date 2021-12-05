@@ -15,7 +15,7 @@ Compile / doc / scalacOptions := Seq(
 
 libraryDependencies := Seq(
   "ch.qos.logback"    %  "logback-classic" % "1.2.6",
-  "com.github.losizm" %% "grapple"         % "9.0.0",
+  "com.github.losizm" %% "grapple"         % "10.0.0",
   "com.github.losizm" %% "little-config"   % "2.0.0",
   "com.github.losizm" %% "little-io"       % "6.0.0",
   "com.github.losizm" %% "scamper"         % "28.1.0",

@@ -16,8 +16,7 @@
 package barbershop
 package web
 
-import grapple.json.*
-import grapple.json.Implicits.jsonValueToCollection
+import grapple.json.{ jsonValueToCollection, * }
 
 import java.time.Instant
 

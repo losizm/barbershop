@@ -21,8 +21,7 @@ import barbershop.web.Implicits.{ *, given }
 
 import com.typesafe.config.Config
 
-import grapple.json.Json
-import grapple.json.Implicits.iterableToJsonArray
+import grapple.json.{ Json, iterableToJsonArray }
 
 import little.config.{ ConfigExt, stringDelegate }
 
@@ -56,7 +55,6 @@ class Api(config: Config) extends RoutingApplication:
 
     router.get("/comments") { req =>
       val list = comments.list(req.query)
-
       logger.debug(s"Comments listed: query=${req.query}")
       Ok(Json.toJson(list))
     }
