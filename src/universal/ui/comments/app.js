@@ -48,11 +48,11 @@
   }
 
   function getComment() {
-    return document.querySelector('section.comments input').value;
+    return document.querySelector('#comments input').value;
   }
 
   function setComment(text) {
-    document.querySelector('section.comments input').value = text;
+    document.querySelector('#comments input').value = text;
   }
 
   function setCommentList(comments) {
@@ -76,19 +76,20 @@
       text.addEventListener('click', () => deleteComment(comment.id));
 
       let listItem = document.createElement('li');
+      listItem.id = 'comment-' + comment.id;
       listItem.appendChild(time);
       listItem.appendChild(text);
 
       return listItem;
     }
 
-    let section = document.querySelector('section.comments');
-    let list    = document.querySelector('section.comments ul');
+    let section = document.querySelector('#comments');
+    let list    = document.querySelector('#comments ul');
     section.replaceChild(createList(comments), list);
   }
 
   function addCommentHandler() {
-    let form = document.querySelector('section.comments form');
+    let form = document.querySelector('#comments form');
 
     form.onsubmit = () => {
       let text = getComment().trim();

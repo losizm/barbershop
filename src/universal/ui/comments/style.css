@@ -46,7 +46,7 @@ header.title > img {
   vertical-align: middle;
 }
 
-section.comments {
+#comments {
   background-color: #0c0c0c;
   color: #aaa;
   margin: 0;
@@ -55,18 +55,18 @@ section.comments {
   padding: 16px;
 }
 
-section.comments > h1 {
+#comments > h1 {
   margin: 0 0 8px 0;
   color: #468;
   font-size: 1.67em;
   text-align: center;
 }
 
-section.comments > form {
+#comments > form {
   text-align: center;
 }
 
-section.comments > form > input[type="text"] {
+#comments > form > input[type="text"] {
   margin-top: 24px;
   padding: 0.33em;
   border: 1px solid #600;
@@ -77,21 +77,21 @@ section.comments > form > input[type="text"] {
   font-size: 14px;
 }
 
-section.comments > form ::placeholder {
+#comments > form ::placeholder {
   color: #600;
 }
 
-section.comments > ul {
+#comments > ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
 
-section.comments > ul > li + li {
+#comments > ul > li + li {
   margin-top: 1em;
 }
 
-section.comments > ul > li > div.time {
+#comments > ul > li > div.time {
   display: block;
   margin: 0;
   padding: 0 0 2px 9px;
@@ -100,7 +100,7 @@ section.comments > ul > li > div.time {
   font-size: 0.66em;
 }
 
-section.comments > ul > li > div.text {
+#comments > ul > li > div.text {
   display: inline-block;
   margin: 0;
   border-radius: 9px;
@@ -112,7 +112,7 @@ section.comments > ul > li > div.text {
   cursor: pointer;
 }
 
-section.comments > ul > li > div:hover.text {
+#comments > ul > li > div:hover.text {
   background-color: #735;
 }
 
