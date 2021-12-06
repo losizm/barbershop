@@ -25,6 +25,14 @@ libraryDependencies := Seq(
 
 enablePlugins(JavaAppPackaging)
 
+Universal / mappings := {
+  val universalMappings = (Universal / mappings).value
+
+  universalMappings.filterNot {
+    case (_, name) => name.endsWith(".swp")
+  }
+}
+
 bashScriptExtraDefines += """addJava -Duser.dir="$app_home/../" """
 bashScriptExtraDefines += """addJava -Dconfig.file="$app_home/../conf/application.conf" """
 bashScriptExtraDefines += """addJava -Dlogback.configurationFile="$app_home/../conf/logback.xml" """
