@@ -16,6 +16,10 @@
 package barbershop
 package web
 
+import grapple.json.{ jsonValueToCollection, * }
+import JsonParser.Event as ParserEvent
+
+import java.nio.file.Path
 import java.time.Instant
 import java.util.concurrent.atomic.AtomicLong
 
@@ -24,15 +28,52 @@ import scala.math.Ordered.orderingToOrdered
 
 import scamper.http.QueryString
 
-import Implicits.*
+import Implicits.{ *, given }
 
 /** Defines comment store. */
 class CommentStore:
   private val comments = TrieMap[Long, Comment]()
-  private val count    = AtomicLong(0)
+  private val lastId   = AtomicLong(0)
 
   /** Gets current store size. */
   def size: Int = comments.size
+
+  /**
+   * Loads comments from specified file.
+   *
+   * @param file input file
+   *
+   * @note Comments are cleared before loading.
+   */
+  def load(file: Path): Unit =
+    val parser = JsonParser(file)
+    try
+      if parser.next() != ParserEvent.StartArray then
+        throw CannotReadComment(s"Invalid start to comments: $file")
+
+      lastId.set(0)
+      comments.clear()
+
+      while parser.next() != ParserEvent.EndArray do
+        val comment = parser.getObject().as[Comment]
+        comments += comment.id -> comment
+        lastId.updateAndGet(_.max(comment.id))
+    finally
+      parser.close()
+
+  /**
+   * Saves comments to specified file.
+   *
+   * @param file output file
+   */
+  def save(file: Path): Unit =
+    val generator = JsonGenerator(file, "  ")
+    try
+      generator.writeStartArray()
+      comments.values.foreach(comment => generator.write(Json.toJson(comment)))
+      generator.writeEnd()
+    finally
+      generator.close()
 
   /**
    * List comments.
@@ -71,7 +112,7 @@ class CommentStore:
    * @return identifer
    */
   def add(text: String): Long =
-    val id = count.incrementAndGet()
+    val id = lastId.incrementAndGet()
     comments += id -> Comment(id, text)
     id
 
@@ -94,6 +135,10 @@ class CommentStore:
    */
   def remove(id: Long): Boolean =
     comments.remove(id).isDefined
+
+  /** Clears all comments. */
+  def clear(): Unit =
+    comments.clear()
 
   extension [T](value: T)
     private def between(min: T, max: T)(using ord: Ordering[T]) =

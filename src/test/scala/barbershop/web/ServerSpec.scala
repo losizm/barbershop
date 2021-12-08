@@ -18,6 +18,7 @@ package web
 
 import grapple.json.{ JsonObject, JsonValue }
 
+import java.io.File
 import java.time.Instant
 import java.util.concurrent.atomic.AtomicReference
 
@@ -27,21 +28,23 @@ import scamper.http.{ HttpResponse, ResponseStatus, given }
 import scamper.http.client.HttpClient
 import ResponseStatus.Registry.*
 
+import com.typesafe.config.{ Config, ConfigValue, ConfigValueFactory }
+
 import Implicits.given
 
 class ServerSpec extends org.scalatest.flatspec.AnyFlatSpec:
-  it should "create and communicate with API server" in withServer { server =>
-    val apiConfig = config.getConfig("barbershop.api")
-    val apiPath   = apiConfig.getString("mountPath")
-    val apiUrl    = server.url + apiPath
+  private val serverConfig = config.getConfig("barbershop")
+  private val apiConfig    = serverConfig.getConfig("api")
+  private val apiPath      = apiConfig.getString("mountPath")
+  private val client       = HttpClient()
 
+  it should "create and communicate with API server" in withServer(serverConfig) { server =>
+    val apiUrl = server.url + apiPath
     info(s"API URL is $apiUrl")
 
     val time1 = AtomicReference[Instant]()
     val time2 = AtomicReference[Instant]()
     val time3 = AtomicReference[Instant]()
-
-    implicit val client = HttpClient()
 
     info("add first comment")
     client.post(s"$apiUrl/comments", body = "Hello, barbershop!") { res =>
@@ -209,15 +212,55 @@ class ServerSpec extends org.scalatest.flatspec.AnyFlatSpec:
     }
   }
 
-  private def withServer[T](op: Server => T): T =
-    val server = Server()
+  it should "save and load comments from file" in withCommentFile { file =>
+    val config = serverConfig.withValue("api.comment.file", toConfigValue(file))
+
+    val comments = Seq(
+      Comment(1, "This is comment #1."),
+      Comment(2, "This is comment #2."),
+      Comment(3, "This is comment #3."),
+      Comment(4, "This is comment #4.")
+    )
+
+    withServer(config) { server =>
+      info(s"creating and saving comments")
+      val apiUrl = server.url + apiPath
+      comments.foreach { comment =>
+        client.post(s"$apiUrl/comments", body = comment.text) { res =>
+          assert(res.status == Created)
+        }
+      }
+    }
+
+    withServer(config) { server =>
+      info(s"loading and verifying comments")
+      val apiUrl = server.url + apiPath
+      comments.foreach { comment =>
+        client.get(s"$apiUrl/comments/${comment.id}") { res =>
+          assert(res.status == Ok)
+          assert(res.comment.text == comment.text)
+        }
+      }
+    }
+  }
+
+  private def toConfigValue(file: File): ConfigValue =
+    ConfigValueFactory.fromAnyRef(file.getCanonicalPath())
+
+  private def withCommentFile[T](f: File => T): T =
+    val file = File.createTempFile("comments-", ".json")
+    try f(file)
+    finally file.delete()
+
+  private def withServer[T](config: Config)(op: Server => T): T =
+    val server = Server(config)
     try
       server.start()
       op(server)
     finally
       server.stop()
 
-  private def verifyComment(url: String, id: Long, text: String)(using client: HttpClient): Instant =
+  private def verifyComment(url: String, id: Long, text: String): Instant =
     client.get(url) { res =>
       assert(res.status == Ok)
 
@@ -228,7 +271,7 @@ class ServerSpec extends org.scalatest.flatspec.AnyFlatSpec:
       comment.time
     }
 
-  private def verifyComments(url: String, comments: (Long, String)*)(using client: HttpClient): Unit =
+  private def verifyComments(url: String, comments: (Long, String)*): Unit =
     client.get(url) { res =>
       assert(res.status == Ok)
 
@@ -243,3 +286,4 @@ class ServerSpec extends org.scalatest.flatspec.AnyFlatSpec:
 
   extension (res: HttpResponse)
     def error: JsonObject = res.as[JsonValue].asInstanceOf[JsonObject]
+    def comment: Comment = res.as[JsonValue].as[Comment]

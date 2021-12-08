@@ -23,6 +23,8 @@ import com.typesafe.config.Config
 
 import grapple.json.{ Json, iterableToJsonArray }
 
+import java.nio.file.Paths
+
 import little.config.{ ConfigExt, stringDelegate }
 
 import scamper.http.{ BodyParser, HttpRequest, Uri }
@@ -44,6 +46,7 @@ class Api(config: Config) extends RouterApplication:
 
   private val logger   = Logger("barbershop.web.Api")
   private val comments = CommentStore()
+  private val file     = config.getOption[String]("comment.file").map(Paths.get(_))
 
   private given BodyParser[String] = BodyParser.string(config.getMemorySizeInt("comment.maxLength"))
 
@@ -52,6 +55,23 @@ class Api(config: Config) extends RouterApplication:
     config.getOption[String]("token")
       .map(TokenAuthenticator(_))
       .foreach(router.incoming)
+
+    router.manage {
+      new ManagedService(): //
+        val name = router.toAbsolutePath("/comments")
+
+        def start(server: HttpServer) =
+          try
+            file.foreach(comments.load)
+          catch case err: Exception =>
+            logger.error("Cannot load comments", err)
+
+        def stop() =
+          try
+            file.foreach(comments.save)
+          catch case err: Exception =>
+            logger.error("Cannot save comments", err)
+    }
 
     router.get("/comments") { req =>
       val list = comments.list(req.query)
