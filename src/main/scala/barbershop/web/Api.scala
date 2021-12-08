@@ -38,7 +38,7 @@ import scamper.http.types.MediaType
  *
  * @param config configuration
  */
-class Api(config: Config) extends RoutingApplication:
+class Api(config: Config) extends RouterApplication:
   /** Creates web API with default configuration. */
   def this() = this(config.getConfig("barbershop.api"))
 
