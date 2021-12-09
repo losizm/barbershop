@@ -162,6 +162,26 @@ kill "$(< [INSTALL_DIR]/barbershop.pid)"
 
 Or, simply press `Ctrl-C` in the terminal in which the application is running.
 
+## Container Images
+
+There are container images available.
+
+__To pull latest image:__
+
+```sh
+docker pull ghcr.io/losizm/barbershop
+```
+
+__To run container:__
+
+```sh
+docker run \
+  --name barbershop \
+  -it \
+  -p 8080:8080 \
+  ghcr.io/losizm/barbershop -D'barbershop.server.port=8080'
+```
+
 ## License
 
 **Barbershop** is licensed under the Apache License, Version 2. See [LICENSE](LICENSE)
