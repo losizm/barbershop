@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 package barbershop
-package web
+package comments
 
 import java.time.Instant
 

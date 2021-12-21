@@ -16,8 +16,8 @@
 package barbershop
 package web
 
+import barbershop.comments.{ *, given }
 import barbershop.logging.Logger
-import barbershop.web.Implicits.{ *, given }
 
 import com.typesafe.config.Config
 

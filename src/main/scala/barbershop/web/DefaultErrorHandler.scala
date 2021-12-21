@@ -16,8 +16,8 @@
 package barbershop
 package web
 
+import barbershop.comments.CannotReadComment
 import barbershop.logging.Logger
-import barbershop.web.Implicits.*
 
 import grapple.json.{ Json, JsonObjectBuilder, JsonOutput }
 

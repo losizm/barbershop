@@ -16,6 +16,8 @@
 package barbershop
 package web
 
+import barbershop.comments.{ Comment, jsonValueToComment }
+
 import grapple.json.{ JsonObject, JsonValue }
 
 import java.io.File
@@ -29,8 +31,6 @@ import scamper.http.client.HttpClient
 import ResponseStatus.Registry.*
 
 import com.typesafe.config.{ Config, ConfigValue, ConfigValueFactory }
-
-import Implicits.given
 
 class ServerSpec extends org.scalatest.flatspec.AnyFlatSpec:
   private val serverConfig = config.getConfig("barbershop")

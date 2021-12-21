@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 package barbershop
-package web
+package comments
 
 /** Indicates inability to read comment. */
 case class CannotReadComment(message: String) extends Exception(message)

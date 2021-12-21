@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 package barbershop
-package web
+package comments
 
 import grapple.json.{ jsonValueToCollection, * }
 import JsonParser.Event as ParserEvent
@@ -28,12 +28,13 @@ import scala.math.Ordered.orderingToOrdered
 
 import scamper.http.QueryString
 
-import Implicits.{ *, given }
-
 /** Defines comment store. */
 class CommentStore:
   private val comments = TrieMap[Long, Comment]()
   private val lastId   = AtomicLong(0)
+
+  /** Tests whether store is empty. */
+  def isEmpty: Boolean = comments.isEmpty
 
   /** Gets current store size. */
   def size: Int = comments.size
