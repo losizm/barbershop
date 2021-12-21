@@ -17,8 +17,8 @@ libraryDependencies := Seq(
   "ch.qos.logback"    %  "logback-classic" % "1.2.6",
   "com.github.losizm" %% "grapple"         % "10.0.0",
   "com.github.losizm" %% "little-config"   % "2.0.0",
-  "com.github.losizm" %% "little-io"       % "6.0.0",
-  "com.github.losizm" %% "scamper"         % "29.0.0",
+  "com.github.losizm" %% "little-io"       % "7.0.0",
+  "com.github.losizm" %% "scamper"         % "32.0.0",
   "com.typesafe"      %  "config"          % "1.4.1",
   "org.scalatest"     %% "scalatest"       % "3.2.10" % Test
 )

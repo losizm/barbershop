@@ -56,21 +56,18 @@ class Api(config: Config) extends RouterApplication:
       .map(TokenAuthenticator(_))
       .foreach(router.incoming)
 
-    router.manage {
-      new ManagedService(): //
-        val name = router.toAbsolutePath("/comments")
+    router.trigger {
+      case LifecycleEvent.Start(server) =>
+        try
+          file.foreach(comments.load)
+        catch case err: Exception =>
+          logger.error("Cannot load comments", err)
 
-        def start(server: HttpServer) =
-          try
-            file.foreach(comments.load)
-          catch case err: Exception =>
-            logger.error("Cannot load comments", err)
-
-        def stop() =
-          try
-            file.foreach(comments.save)
-          catch case err: Exception =>
-            logger.error("Cannot save comments", err)
+      case LifecycleEvent.Stop(server) =>
+        try
+          file.foreach(comments.save)
+        catch case err: Exception =>
+          logger.error("Cannot save comments", err)
     }
 
     router.get("/comments") { req =>
