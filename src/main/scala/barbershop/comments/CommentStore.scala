@@ -16,22 +16,20 @@
 package barbershop
 package comments
 
-import grapple.json.{ jsonValueToCollection, * }
-import JsonParser.Event as ParserEvent
-
 import java.nio.file.Path
 import java.time.Instant
 import java.util.concurrent.atomic.AtomicLong
 
-import scala.collection.concurrent.TrieMap
 import scala.math.Ordered.orderingToOrdered
 
 import scamper.http.QueryString
 
 /** Defines comment store. */
 class CommentStore:
-  private val comments = TrieMap[Long, Comment]()
-  private val lastId   = AtomicLong(0)
+  private val bundle = CommentStoreBundle()
+  private val lastId = AtomicLong(0)
+
+  import bundle.{ comments, descriptors, blobs, attachments }
 
   /** Tests whether store is empty. */
   def isEmpty: Boolean = comments.isEmpty
@@ -44,37 +42,58 @@ class CommentStore:
    *
    * @param file input file
    *
+   * @return this comment store
+   *
    * @note Comments are cleared before loading.
    */
-  def load(file: Path): Unit =
-    val parser = JsonParser(file)
-    try
-      if parser.next() != ParserEvent.StartArray then
-        throw CannotReadComment(s"Invalid start to comments: $file")
-
-      lastId.set(0)
-      comments.clear()
-
-      while parser.next() != ParserEvent.EndArray do
-        val comment = parser.getObject().as[Comment]
-        comments += comment.id -> comment
-        lastId.updateAndGet(_.max(comment.id))
-    finally
-      parser.close()
+  def load(file: Path): this.type = synchronized {
+    clear()
+    bundle.read(file)
+    resetLastId()
+    this
+  }
 
   /**
    * Saves comments to specified file.
    *
    * @param file output file
+   *
+   * @return this comment store
    */
-  def save(file: Path): Unit =
-    val generator = JsonGenerator(file, "  ")
-    try
-      generator.writeStartArray()
-      comments.values.foreach(comment => generator.write(Json.toJson(comment)))
-      generator.writeEnd()
-    finally
-      generator.close()
+  def save(file: Path): this.type = synchronized {
+    compact()
+    bundle.write(file)
+    this
+  }
+
+  /**
+   * Compacts comment store.
+   *
+   * @return this comment store
+   */
+  def compact(): this.type = synchronized {
+    val ids = comments.values.flatMap(_.attachments.map(_.id)).toSet
+    descriptors.filterInPlace((id, _) => ids.contains(id))
+    attachments.filterInPlace((id, _) => descriptors.contains(id))
+
+    val keys = attachments.values.toSet
+    blobs.filterInPlace((key, _) => keys.contains(key))
+
+    this
+  }
+
+  /**
+   * Clears all comments.
+   *
+   * @return this comment store
+   */
+  def clear(): this.type = synchronized {
+    comments.clear()
+    descriptors.clear()
+    blobs.clear()
+    attachments.clear()
+    this
+  }
 
   /**
    * List comments.
@@ -113,9 +132,28 @@ class CommentStore:
    * @return identifer
    */
   def add(text: String): Long =
-    val id = lastId.incrementAndGet()
-    comments += id -> Comment(id, text)
+    add(text, Nil)
+
+  /**
+   * Adds comment with attachments.
+   *
+   * @return identifer
+   */
+  def add(text: String, files: Seq[Attachment]): Long = synchronized {
+    val id          = lastId.incrementAndGet()
+    val attachments = files.map(addAttachment)
+
+    comments += id -> Comment(id, text, attachments)
     id
+  }
+
+  /**
+   * Adds comment with attachments.
+   *
+   * @return identifer
+   */
+  def add(text: String, file: Attachment, more: Attachment*): Long =
+    add(text, file +: more)
 
   /** Gets comment. */
   def get(id: Long): Option[Comment] =
@@ -127,7 +165,27 @@ class CommentStore:
    * @return `true` if comment was updated; otherwise, `false`
    */
   def update(id: Long, text: String): Boolean =
-    comments.replace(id, Comment(id, text)).isDefined
+    update(id, text, Nil)
+
+  /**
+   * Updates comment with attachments.
+   *
+   * @return `true` if comment was updated; otherwise, `false`
+   */
+  def update(id: Long, text: String, files: Seq[Attachment]): Boolean = synchronized {
+    comments.remove(id)
+      .map(old => old.attachments.foreach(removeAttachment))
+      .map(_   => comments += id -> Comment(id, text, files.map(addAttachment)))
+      .isDefined
+  }
+
+  /**
+   * Updates comment with attachments.
+   *
+   * @return `true` if comment was updated; otherwise, `false`
+   */
+  def update(id: Long, text: String, file: Attachment, more: Attachment*): Boolean =
+    update(id, text, file +: more)
 
   /**
    * Deletes comment.
@@ -135,12 +193,40 @@ class CommentStore:
    * @return `true` if comment was deleted; otherwise, `false`
    */
   def remove(id: Long): Boolean =
-    comments.remove(id).isDefined
+    synchronized(comments.remove(id).isDefined)
 
-  /** Clears all comments. */
-  def clear(): Unit =
-    comments.clear()
+  /** Gets attachment. */
+  def getAttachment(id: Long): Option[Attachment] =
+    for
+      desc    <- descriptors.get(id)
+      blobKey <- attachments.get(id)
+      blob    <- blobs.get(blobKey)
+    yield
+      Attachment(desc.name, desc.kind, blob.data)
 
-  extension [T](value: T)
-    private def between(min: T, max: T)(using ord: Ordering[T]) =
+  extension [T](value: T)(using ord: Ordering[T])
+    private def between(min: T, max: T) =
       value >= min && value <= max
+
+  private def resetLastId(): Unit =
+    val lastCommentId    = comments.keySet.maxOption.getOrElse(0L)
+    val lastDescriptorId = descriptors.keySet.maxOption.getOrElse(0L)
+    lastId.set(lastCommentId.max(lastDescriptorId))
+
+  private def addAttachment(file: Attachment): FileDescriptor =
+    val desc = FileDescriptor(
+      id   = lastId.incrementAndGet(),
+      name = file.name,
+      kind = file.kind,
+      size = file.size
+    )
+    val blob = Blob(file.data)
+
+    descriptors += desc.id -> desc
+    blobs       += blob.key -> blob
+    attachments += desc.id -> blob.key
+    desc
+
+  private def removeAttachment(file: FileDescriptor): Unit =
+    descriptors.remove(file.id)
+    attachments.remove(file.id)

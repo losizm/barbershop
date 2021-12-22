@@ -173,19 +173,24 @@ class CommentStoreSpec extends org.scalatest.flatspec.AnyFlatSpec:
   }
 
   it should "save and load comments from file" in withCommentFile { file =>
-    val comments = Seq(
-      Comment(1, "This is comment #1."),
-      Comment(2, "This is comment #2."),
-      Comment(3, "This is comment #3."),
-      Comment(4, "This is comment #4.")
-    )
+    case class CommentInput(id: Long, text: String, files: Seq[Attachment])
 
+    val users    = Attachment(File("src/test/resources/users.json"))
+    val photo    = Attachment(File("src/test/resources/photo.svg"))
+    val currency = Attachment(File("src/test/resources/currency.dat"))
+
+    val comments = Seq(
+      CommentInput(1, "This is comment #1.", Nil),
+      CommentInput(2, "This is comment #2.", Seq(users, photo)),
+      CommentInput(5, "This is comment #3.", Nil),
+      CommentInput(6, "This is comment #4.", Seq(photo, currency))
+    )
 
     val commentStore = CommentStore()
 
     info("adding comments")
     comments.foreach { comment =>
-      assert(commentStore.add(comment.text) == comment.id)
+      assert(commentStore.add(comment.text, comment.files) == comment.id)
     }
     assert(commentStore.size == 4)
 
@@ -199,15 +204,49 @@ class CommentStoreSpec extends org.scalatest.flatspec.AnyFlatSpec:
     info("loading comments")
     commentStore.load(file.toPath)
     assert(commentStore.size == 4)
+    assert(commentStore.getAttachment(1).isEmpty)
+    assert(commentStore.getAttachment(2).isEmpty)
+    assert(commentStore.getAttachment(5).isEmpty)
+    assert(commentStore.getAttachment(6).isEmpty)
+    assert(commentStore.get(3).isEmpty)
+    assert(commentStore.get(4).isEmpty)
+    assert(commentStore.get(7).isEmpty)
+    assert(commentStore.get(8).isEmpty)
 
     info("verifying comments")
     comments.foreach { comment =>
       assert(commentStore.get(comment.id).exists(_.text == comment.text))
     }
+
+    info("verifying attachment count")
+    comments.foreach { comment =>
+      assert(commentStore.get(comment.id).exists(_.attachments.size == comment.files.size))
+    }
+
+    info("verifying attachment name")
+    assert(commentStore.getAttachment(3).exists(_.name == "users.json"))
+    assert(commentStore.getAttachment(4).exists(_.name == "photo.svg"))
+    assert(commentStore.getAttachment(7).exists(_.name == "photo.svg"))
+    assert(commentStore.getAttachment(8).exists(_.name == "currency.dat"))
+
+    info("verifying attachment kind")
+    assert(commentStore.getAttachment(3).exists(_.kind == "application/json"))
+    assert(commentStore.getAttachment(4).exists(_.kind == "image/svg+xml"))
+    assert(commentStore.getAttachment(7).exists(_.kind == "image/svg+xml"))
+    assert(commentStore.getAttachment(8).exists(_.kind == "application/octet-stream"))
+
+    info("verifying attachment data")
+    assert(commentStore.getAttachment(3).exists(_.data sameElements users.data))
+    assert(commentStore.getAttachment(4).exists(_.data sameElements photo.data))
+    assert(commentStore.getAttachment(7).exists(_.data sameElements photo.data))
+    assert(commentStore.getAttachment(8).exists(_.data sameElements currency.data))
+
+    info("verify comment id after adding new comment")
+    assert(commentStore.add("This is comment #5") == 9)
   }
 
   private def withCommentFile[T](f: File => T): T =
-    val file = File.createTempFile("comments-", ".json")
+    val file = File.createTempFile("comments-", ".zip")
     try f(file)
     finally file.delete()
 

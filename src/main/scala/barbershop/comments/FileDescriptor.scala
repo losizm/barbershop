@@ -16,14 +16,12 @@
 package barbershop
 package comments
 
-import java.time.Instant
-
 /**
- * Defines comment.
+ * Defines file descriptor.
  *
- * @param id          identifier
- * @param text        comment text
- * @param attachments file attachments
- * @param time        creation time
+ * @param id   file identifier
+ * @param name file name
+ * @param kind file type
+ * @param size file size
  */
-case class Comment(id: Long, text: String, attachments: Seq[FileDescriptor] = Nil, time: Instant = Instant.now())
+case class FileDescriptor(id: Long, name: String, kind: String, size: Long)

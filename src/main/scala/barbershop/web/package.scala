@@ -26,6 +26,8 @@ import scamper.http.types.MediaType
 
 private val jsonType = MediaType("application/json")
 
+private val maxAttachmentCount = 10
+
 /** Parses HTTP message body to string. */
 given stringBodyParser: BodyParser[String] = BodyParser.string(Int.MaxValue)
 

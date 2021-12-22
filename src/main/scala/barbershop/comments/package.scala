@@ -16,7 +16,7 @@
 package barbershop
 package comments
 
-import grapple.json.{ jsonValueToCollection, * }
+import grapple.json.{ iterableToJsonArray, jsonValueToCollection, * }
 
 import java.time.Instant
 
@@ -24,13 +24,35 @@ import scala.util.Try
 
 import scamper.http.QueryString
 
+/** Converts JSON value to file descriptor. */
+given jsonValueToFileDescriptor: JsonInput[FileDescriptor] =
+  case json: JsonObject =>
+    FileDescriptor(
+      id   = json.getLong("id"),
+      name = json.getString("name"),
+      kind = json.getString("kind"),
+      size = json.getLong("size")
+    )
+
+  case _ => throw IllegalArgumentException("Expected JSON object")
+
+/** Converts file descriptor to JSON value. */
+given fileDescriptorToJsonValue: JsonOutput[FileDescriptor] =
+  descriptor => JsonObjectBuilder()
+    .add("id",   descriptor.id)
+    .add("name", descriptor.name)
+    .add("kind", descriptor.kind)
+    .add("size", descriptor.size)
+    .build()
+
 /** Converts JSON value to comment. */
 given jsonValueToComment: JsonInput[Comment] =
   case json: JsonObject =>
     Comment(
-      json.getLong("id"),
-      json.getString("text"),
-      json("time") match
+      id          = json.getLong("id"),
+      text        = json.getString("text"),
+      attachments = json.getOrElse("attachments", Seq.empty[FileDescriptor]),
+      time        = json("time") match
         case JsonString(value) => Instant.parse(value)
         case JsonNumber(value) => Instant.ofEpochMilli(value.toLong)
         case _                 => throw IllegalArgumentException("Expected JSON object")
@@ -41,9 +63,10 @@ given jsonValueToComment: JsonInput[Comment] =
 /** Converts comment to JSON value. */
 given commentToJsonValue: JsonOutput[Comment] =
   comment => JsonObjectBuilder()
-    .add("id",   comment.id)
-    .add("text", comment.text)
-    .add("time", comment.time.toString)
+    .add("id",          comment.id)
+    .add("text",        comment.text)
+    .add("attachments", Json.toJson(comment.attachments))
+    .add("time",        comment.time.toString)
     .build()
 
 extension (query: QueryString)

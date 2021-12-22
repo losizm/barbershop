@@ -17,7 +17,15 @@ package barbershop
 
 import com.typesafe.config.{ Config, ConfigFactory }
 
+import java.nio.file.{ Path, Paths }
+
+import little.config.ConfigDelegate
+
 private val config = ConfigFactory.load()
+
+private given pathDelegate: ConfigDelegate[Path] with
+  def get(config: Config, path: String): Path =
+    Paths.get(config.getString(path))
 
 extension (config: Config)
   private def getMemorySizeInt(path: String): Int =

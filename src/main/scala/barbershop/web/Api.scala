@@ -23,13 +23,15 @@ import com.typesafe.config.Config
 
 import grapple.json.{ Json, iterableToJsonArray }
 
-import java.nio.file.Paths
+import java.nio.file.{ Files, Path }
 
 import little.config.{ ConfigExt, stringDelegate }
+import little.io.FileExt
 
 import scamper.http.{ BodyParser, HttpRequest, Uri }
 import scamper.http.ResponseStatus.Registry.*
 import scamper.http.headers.{ ContentType, Location }
+import scamper.http.multipart.{ *, given }
 import scamper.http.server.{ *, given }
 import scamper.http.types.MediaType
 
@@ -46,9 +48,10 @@ class Api(config: Config) extends RouterApplication:
 
   private val logger   = Logger("barbershop.web.Api")
   private val comments = CommentStore()
-  private val file     = config.getOption[String]("comment.file").map(Paths.get(_))
+  private val file     = config.getOption[Path]("comment.file")
 
-  private given BodyParser[String] = BodyParser.string(config.getMemorySizeInt("comment.maxLength"))
+  private given BodyParser[String]    = BodyParser.string(config.getMemorySizeInt("comment.maxTextLength"))
+  private given BodyParser[Multipart] = Multipart.getBodyParser(maxLength = config.getMemorySizeInt("comment.maxTotalLength"))
 
   /** Applies API to supplied router. */
   def apply(router: Router): Unit =
@@ -59,7 +62,11 @@ class Api(config: Config) extends RouterApplication:
     router.trigger {
       case LifecycleEvent.Start(server) =>
         try
-          file.foreach(comments.load)
+          file.foreach { path =>
+            Files.exists(path) match
+              case true  => comments.load(path)
+              case false => logger.warn(s"Comment file does not exist: ${path.normalize().toAbsolutePath}")
+          }
         catch case err: Exception =>
           logger.error("Cannot load comments", err)
 
@@ -76,49 +83,96 @@ class Api(config: Config) extends RouterApplication:
       Ok(Json.toJson(list))
     }
 
-    router.post("/comments") { implicit req =>
-      val id = comments.add(text)
+    router.post("/comments") { req =>
+      val id = getContent(req)
+        match
+          case text: String     => comments.add(text)
+          case parts: Multipart => comments.add(getText(parts), getAttachments(parts))
+
       logger.debug(s"Comment added: id=$id")
       Created().setLocation(Uri(router.toAbsolutePath(s"/comments/$id")))
     }
 
     router.get("/comments/:id") { req =>
       val id = req.params.getLong("id")
-      comments.get(id) match
-        case Some(comment) =>
-          logger.debug(s"Comment listed: id=$id")
-          Ok(Json.toJson(comment))
 
-        case None =>
-          logger.debug(s"Comment not listed: id=$id (Does Not Exist)")
-          NotFound()
+      comments.get(id)
+        match
+          case Some(comment) =>
+            logger.debug(s"Comment listed: id=$id")
+            Ok(Json.toJson(comment))
+
+          case None =>
+            logger.debug(s"Comment not listed: id=$id (Does Not Exist)")
+            NotFound()
     }
 
     router.put("/comments/:id") { implicit req =>
       val id = req.params.getLong("id")
-      comments.update(id, text) match
-        case true =>
-          logger.debug(s"Comment updated: id=$id")
-          NoContent()
 
-        case false =>
-          logger.debug(s"Comment not updated: id=$id (Does Not Exist)")
-          NotFound()
+      getContent(req)
+        match
+          case text: String     => comments.update(id, text)
+          case parts: Multipart => comments.update(id, getText(parts), getAttachments(parts))
+        match
+          case true =>
+            logger.debug(s"Comment updated: id=$id")
+            NoContent()
+
+          case false =>
+            logger.debug(s"Comment not updated: id=$id (Does Not Exist)")
+            NotFound()
     }
 
     router.delete("/comments/:id") { req =>
       val id = req.params.getLong("id")
-      comments.remove(id) match
-        case true =>
-          logger.debug(s"Comment deleted: id=$id")
-          NoContent()
 
-        case false =>
-          logger.debug(s"Comment not deleted: id=$id (Does Not Exist)")
-          NotFound()
+      comments.remove(id)
+        match
+          case true =>
+            logger.debug(s"Comment deleted: id=$id")
+            NoContent()
+
+          case false =>
+            logger.debug(s"Comment not deleted: id=$id (Does Not Exist)")
+            NotFound()
     }
 
-  private def text(using req: HttpRequest): String =
-    req.getContentType.forall(_.fullName == "text/plain") match
-      case true  => req.as[String]
-      case false => throw CannotReadComment("Cannot read comment")
+    router.get("/attachments/:id") { req =>
+      val id = req.params.getLong("id")
+
+      comments.getAttachment(id)
+        match
+          case Some(file) =>
+            logger.debug(s"Attachment found: id=$id")
+            Ok(file.data.toArray).setContentType(MediaType(file.kind))
+
+          case None =>
+            logger.debug(s"Attachment not found: id=$id (Does Not Exist)")
+            NotFound()
+    }
+
+  private def getContent(req: HttpRequest): String | Multipart =
+    getContentType(req)
+      match
+        case "text/plain"          => req.continue(); req.as[String]
+        case "multipart/form-data" => req.continue(); req.as[Multipart]
+        case _                     => throw CannotReadComment("Cannot read comment")
+
+  private def getContentType(req: HttpRequest): String =
+    req.getContentType.map(_.fullName).getOrElse("text/plain")
+
+  private def getText(multipart: Multipart): String =
+    multipart.getString("text")
+      .getOrElse(throw ParameterNotFound("text"))
+
+  private def getAttachments(multipart: Multipart): Seq[Attachment] =
+    multipart.getParts("attachment")
+      .take(maxAttachmentCount)
+      .map { part =>
+        Attachment(
+          part.fileName.getOrElse(FileNameFactory.create(part.contentType)),
+          part.contentType.fullName,
+          part.getBytes()
+        )
+      }
