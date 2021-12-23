@@ -46,6 +46,13 @@ header.title > img {
   vertical-align: middle;
 }
 
+footer.copyright {
+  margin: 12px 24px 16px 16px;
+  font-family: "Avenir Next", Helvetica, sans-serif;
+  font-size: 0.67em;
+  color: #735;
+}
+
 #comments {
   background-color: #0c0c0c;
   color: #aaa;
@@ -63,22 +70,70 @@ header.title > img {
 }
 
 #comments > form {
+  margin-top: 24px;
   text-align: center;
 }
 
-#comments > form > input[type="text"] {
-  margin-top: 24px;
+#comments > form > .comment-outbox {
+  display: inline-block;
+  margin-bottom: 0.1em;
+  border: 1px solid #513;
+  border-radius: 1em;
+  padding: 0.1em 0.2em 0.1em 1em;
+  background-color: #735;
+}
+
+#comments > form > .comment-outbox ::placeholder {
+  color: #600;
+}
+
+#comments > form > .comment-outbox > input[type="text"] {
   padding: 0.33em;
-  border: 1px solid #600;
-  border-radius: 0.5em;
+  border: none;
   background-color: #735;
   color: #300;
   outline: none;
   font-size: 14px;
 }
 
-#comments > form ::placeholder {
-  color: #600;
+#comments > form > .comment-outbox > button[type="button"] {
+  display: inline-block;
+  margin: 0;
+  border: none;
+  padding: 0;
+  background: none;
+  color: #a68;
+  font-family: "Avenir Next", Helvetica, sans-serif;
+  font-size: 12px;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+#comments > form > .comment-outbox > button[type="submit"] {
+  display: inline-block;
+  margin: -5em 0 -5em 0.2em;
+  border: none;
+  border-radius: 1em;
+  padding: 0.5em 1em 0.4em 1em;
+  background: #513;
+  color: #a68;
+  font-family: "Avenir Next", Helvetica, sans-serif;
+  font-size: 12px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#comments > form > .comment-outbox > button[type="submit"]:hover {
+  background: #561636;
+  color: #b79;
+}
+
+#comments > form:invalid > .comment-outbox > button[type="submit"],
+#comments > form:invalid > .comment-outbox > button[type="submit"]:hover {
+  background: #513;
+  color: #624;
+  cursor: default;
 }
 
 #comments > ul {
@@ -116,9 +171,46 @@ header.title > img {
   background-color: #735;
 }
 
-footer.copyright {
-  margin: 12px 24px 16px 16px;
+#comments > ul > li > div.attachments > div.file {
+  display: inline-block;
+  margin: 0.4em 0.4em 0 0;
+  border-radius: 9px;
+  padding: 3px 9px;
+  background-color: #486;
+  color: #111;
   font-family: "Avenir Next", Helvetica, sans-serif;
-  font-size: 0.67em;
-  color: #735;
+  font-size: 0.85em;
+  cursor: pointer;
+}
+
+#comments > ul > li > div.attachments > div:hover.file {
+  background-color: #597;
+  color: #222;
+}
+
+#comments > ul > li > div.attachments > div.file > img {
+  margin-right: 0.2em;
+  vertical-align: sub;
+}
+
+#attachment-list {
+  display: block;
+  text-align: center;
+}
+
+#attachment-list > .file-item {
+  display: inline-block;
+  margin: 0.4em 0.4em 0 0;
+  border-radius: 9px;
+  padding: 0.3em 0.8em;
+  background-color: #243;
+  color: #aaa;
+  font-family: "Avenir Next", Helvetica, sans-serif;
+  font-size: 0.85em;
+  cursor: pointer;
+}
+
+#attachment-list > .file-item:hover {
+  background-color: #735;
+  color: #000;
 }

@@ -31,12 +31,16 @@ limitations under the License.
     <h1>Comments</h1>
     <ul></ul>
     <form>
-      <input type="text" name="text" placeholder="Enter comment" size="40">
+      <div class="comment-outbox">
+        <button type="button" name="add-attachment" title="Add attachment..."><img src="paperclip.svg"></button>
+        <input type="file" name="attachment" multiple style="display: none;">
+        <input type="text" name="text" placeholder="Comment..." size="40" required>
+        <button type="submit">Send</button>
+      </div>
+      <section id="attachment-list"></section>
     </form>
   </section>
-  <footer class="copyright">
-    &copy; 2021 Carlos Conyers. All rights reserved.
-  </footer>
+  <footer class="copyright">&copy; 2021 Carlos Conyers. All rights reserved.</footer>
   <script src="app.js"></script>
 </body>
 </html>
