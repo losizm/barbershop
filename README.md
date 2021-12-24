@@ -11,7 +11,7 @@ To get started, clone the GitHub repo:
 git clone 'https://github.com/losizm/barbershop'
 ```
 
-And, ensure the following are installed locally with their bin directories on
+Also ensure the following are installed locally with their bin directories on
 the executable path:
 
 * Java JDK 8 or higher; see [Adoptium](https://adoptium.net) for prebuilt OpenJDK binaries
@@ -70,7 +70,7 @@ To start the application, simply run the script:
 [INSTALL_DIR]/bin/barbershop
 ```
 
-Or, to start the application while also overriding configuration, you may supply
+Or, to start the application while also overriding configuration, you can supply
 any number of the key/value pairs as system properties:
 
 ```sh
@@ -93,9 +93,10 @@ A successful startup prints something like the following to the terminal:
 [2021-11-24T03:36:48.449-05:00][INFO] barbershop.web.Server - localhost:8080 - Server is up and running
 ```
 
-And, a PID file is created at `[INSTALL_DIR]/barbershop.pid`.
+When the application is successfully started, a PID file is created at
+`[INSTALL_DIR]/barbershop.pid`.
 
-### How to Use REST API
+### The REST API
 
 The application implements a REST API for managing arbitrary comments.
 
@@ -107,19 +108,63 @@ curl -i -X POST -H'Content-Type: text/plain' -d 'Hello, barbershop!' http://loca
 
 The newly created comment's URI is returned in the **Location** header.
 
-**To read a comment:**
+```
+HTTP/1.1 201 Created
+Location: /api/comments/1
+Content-Length: 0
+Date: Thu, 23 Dec 2021 23:45:23 GMT
+Connection: close
+````
+
+**To create a comment with attachments:**
+
 ```sh
-curl http://localhost:8080/api/comments/1
+curl -i -X POST \
+  -F text='Here are some more cat photos.' \
+  -F'attachment=@"cat1.jpg"; type=image/jpeg; filename=cat1.jpg' \
+  -F'attachment=@"cat2.jpg"; type=image/jpeg; filename=cat2.jpg' \
+  -F'attachment=@"cat3.jpg"; type=image/jpeg; filename=cat3.jpg' \
+  http://localhost:8080/api/comments
 ```
 
-Response body is a JSON object.
+**To read a comment:**
+```sh
+curl http://localhost:8080/api/comments/2
+```
+
+The response body is a JSON object. If a comment has attachments, the attachments
+are described and an identifier is specified for each, which can be used to
+download the attachment.
+
+```json
+{
+  "id": 2,
+  "text": "Here are some more cat photos.",
+  "attachments": [
+    {
+      "id": 3,
+      "name": "cat1.jpg",
+      "kind": "image/jpeg",
+      "size": 11050
+    },
+    ...
+  ],
+  "time": "2021-12-23T23:45:23.187Z"
+}
+```
+
+**To download an attachment:**
+
+```sh
+curl -s http://localhost:8080/api/attachments/3 > cat.jpg
+```
 
 **To read multiple comments:**
 ```sh
 curl http://localhost:8080/api/comments
 ```
 
-Response body is a JSON array.
+The response body is a JSON array of comments.
 
 The following query parameters may be supplied in URL to filter comments:
 
@@ -140,17 +185,17 @@ curl -X PUT -H'Content-Type: text/plain' -d 'HELLO, BARBERSHOP!' http://localhos
 curl -X DELETE http://localhost:8080/api/comments/1
 ```
 
-### Comments Page
+### The Single-page application
 
-To view the single-page application, point your browser to
+For a more visual experience, point your browser to
 [http://localhost:8080/ui/comments/index.html](http://localhost:8080/ui/comments/index.html).
 
 <div>
-  <img style="padding: 0.2em;" src="images/ui-screenshot.png" width="500"/>
+  <img style="padding: 0.2em;" src="images/ui-screenshot.png" width="560"/>
 </div>
 
 Enter a comment and watch it appear in the list. Click on a comment and watch it
-disappear from the list.
+disappear from the list, or click on an attachment to download it.
 
 ## Stopping Application
 
@@ -166,13 +211,17 @@ Or, simply press `Ctrl-C` in the terminal in which the application is running.
 
 There are container images available.
 
-__To pull latest image:__
+__To pull the latest image:__
 
 ```sh
 docker pull ghcr.io/losizm/barbershop
 ```
 
-__To run container:__
+_**Note:** The container image described above is located at GitHub's container
+registry. See also [Docker Hub](https://hub.docker.com/r/losizm/barbershop) for
+container images._
+
+__To run the container:__
 
 ```sh
 docker run \
