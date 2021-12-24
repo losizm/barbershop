@@ -1,11 +1,12 @@
 # Barbershop
 
 **Barbershop** is an example application using [Scamper](https://github.com/losizm/scamper/)
-as a web application framework.
+as the web framework. It features a REST API along with a single-page
+application to manage arbitrary comments.
 
 ## Getting Started
 
-To get started, clone the GitHub repo:
+To get started, clone the Git repository:
 
 ```
 git clone 'https://github.com/losizm/barbershop'
@@ -57,21 +58,16 @@ The file can be edited to include more settings. Alternatively, another file
 named `overrides.conf` can be created in the same directory to supply additional
 configuration.
 
-See also [reference.conf](src/main/resources/reference.conf) for a complete set
-of configuration.
+See [reference.conf](src/main/resources/reference.conf) for available
+configuration along with their default settings.
 
 ## Running Application
 
 The startup script is located at `[INSTALL_DIR]/bin/barbershop`.
 
-To start the application, simply run the script:
-
-```sh
-[INSTALL_DIR]/bin/barbershop
-```
-
-Or, to start the application while also overriding configuration, you can supply
-any number of the key/value pairs as system properties:
+No command line arguments are required; however, to start the application while
+also overriding configuration, you can supply any number of the key/value pairs
+as system properties:
 
 ```sh
 [INSTALL_DIR]/bin/barbershop -D'barbershop.server.host=localhost' -D'barbershop.server.port=8080'
@@ -80,17 +76,17 @@ any number of the key/value pairs as system properties:
 A successful startup prints something like the following to the terminal:
 
 ```log
-[2021-11-24T03:36:48.445-05:00][INFO] barbershop.web.Server - localhost:8080 - Starting server
-[2021-11-24T03:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Secure: false
-[2021-11-24T03:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Logger: Logger("barbershop.web.Server")
-[2021-11-24T03:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Backlog Size: 20
-[2021-11-24T03:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Pool Size: 4
-[2021-11-24T03:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Queue Size: 16
-[2021-11-24T03:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Buffer Size: 8192
-[2021-11-24T03:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Read Timeout: 250
-[2021-11-24T03:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Header Limit: 20
-[2021-11-24T03:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Keep-Alive: disabled
-[2021-11-24T03:36:48.449-05:00][INFO] barbershop.web.Server - localhost:8080 - Server is up and running
+[2021-12-23T09:36:48.445-05:00][INFO] barbershop.web.Server - localhost:8080 - Starting server
+[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Secure: false
+[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Logger: Logger("barbershop.web.Server")
+[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Backlog Size: 20
+[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Pool Size: 4
+[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Queue Size: 16
+[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Buffer Size: 8192
+[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Read Timeout: 250
+[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Header Limit: 20
+[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Keep-Alive: disabled
+[2021-12-23T09:36:48.449-05:00][INFO] barbershop.web.Server - localhost:8080 - Server is up and running
 ```
 
 When the application is successfully started, a PID file is created at
@@ -98,12 +94,15 @@ When the application is successfully started, a PID file is created at
 
 ### The REST API
 
-The application implements a REST API for managing arbitrary comments.
+You can interact with the REST API using command line tools, such as curl.
 
 **To create a comment:**
 
 ```sh
-curl -i -X POST -H'Content-Type: text/plain' -d 'Hello, barbershop!' http://localhost:8080/api/comments
+curl -i -X POST \
+  -H 'Content-Type: text/plain' \
+  -d 'Hello, barbershop!' \
+  http://localhost:8080/api/comments
 ```
 
 The newly created comment's URI is returned in the **Location** header.
@@ -119,11 +118,12 @@ Connection: close
 **To create a comment with attachments:**
 
 ```sh
+# Send comment and attachments as multipart/form-data
 curl -i -X POST \
   -F text='Here are some more cat photos.' \
-  -F'attachment=@"cat1.jpg"; type=image/jpeg; filename=cat1.jpg' \
-  -F'attachment=@"cat2.jpg"; type=image/jpeg; filename=cat2.jpg' \
-  -F'attachment=@"cat3.jpg"; type=image/jpeg; filename=cat3.jpg' \
+  -F 'attachment=@"cat1.jpg"; type=image/jpeg; filename=cat1.jpg' \
+  -F 'attachment=@"cat2.jpg"; type=image/jpeg; filename=cat2.jpg' \
+  -F 'attachment=@"cat3.jpg"; type=image/jpeg; filename=cat3.jpg' \
   http://localhost:8080/api/comments
 ```
 
@@ -147,7 +147,18 @@ download the attachment.
       "kind": "image/jpeg",
       "size": 11050
     },
-    ...
+    {
+      "id": 4,
+      "name": "cat2.jpg",
+      "kind": "image/jpeg",
+      "size": 12023
+    },
+    {
+      "id": 5,
+      "name": "cat3.jpg",
+      "kind": "image/jpeg",
+      "size": 3865
+    }
   ],
   "time": "2021-12-23T23:45:23.187Z"
 }
@@ -156,12 +167,14 @@ download the attachment.
 **To download an attachment:**
 
 ```sh
+# Redirect downloaded attachment to file
 curl -s http://localhost:8080/api/attachments/3 > cat.jpg
 ```
 
 **To read multiple comments:**
 ```sh
-curl http://localhost:8080/api/comments
+# Limit output to 10 comments
+curl http://localhost:8080/api/comments?limit=10
 ```
 
 The response body is a JSON array of comments.
@@ -170,14 +183,19 @@ The following query parameters may be supplied in URL to filter comments:
 
 *  `minId` &ndash; lower bound of comment identifier
 *  `maxId` &ndash; upper bound of comment identifier
-*  `minTime` &ndash; lower bound of comment time; supplied as Epoch milliseconds or timestamp formatted as `yyyy-MM-ddTmm:hh:ssZ`
-*  `maxTime` &ndash; upper bound of comment time; supplied as Epoch milliseconds or timestamp formatted as `yyyy-MM-ddTmm:hh:ssZ`
+*  `minTime`<sup>&dagger;</sup> &ndash; lower bound of comment time
+*  `maxTime`<sup>&dagger;</sup> &ndash; upper bound of comment time
 *  `offset` &ndash; number of leading comments to drop
 *  `limit` &ndash; maximum number of comments to list
 
+<small>&dagger; Supplied as Epoch milliseconds or timestamp formatted as `yyyy-MM-ddTmm:hh:ssZ`</small>
+
 **To update a comment:**
 ```sh
-curl -X PUT -H'Content-Type: text/plain' -d 'HELLO, BARBERSHOP!' http://localhost:8080/api/comments/1
+curl -X PUT \
+  -H 'Content-Type: text/plain' \
+  -d 'HELLO, BARBERSHOP!' \
+  http://localhost:8080/api/comments/1
 ```
 
 **To delete a comment:**
@@ -194,8 +212,8 @@ For a more visual experience, point your browser to
   <img style="padding: 0.2em;" src="images/ui-screenshot.png" width="560"/>
 </div>
 
-Enter a comment and watch it appear in the list. Click on a comment and watch it
-disappear from the list, or click on an attachment to download it.
+Enter a comment and watch it appear in the list. Click on a comment to delete
+it, or click on an attachment to download it.
 
 ## Stopping Application
 
@@ -217,9 +235,9 @@ __To pull the latest image:__
 docker pull ghcr.io/losizm/barbershop
 ```
 
-_**Note:** The container image described above is located at GitHub's container
-registry. See also [Docker Hub](https://hub.docker.com/r/losizm/barbershop) for
-container images._
+_**Note:** The container image described above is located at the GitHub container
+registry. See also [Barbershop on Docker Hub](https://hub.docker.com/r/losizm/barbershop)
+for container images._
 
 __To run the container:__
 
