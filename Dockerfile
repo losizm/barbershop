@@ -5,7 +5,7 @@
 #     sbt packageZipTarball
 #
 # (2) Build Docker image:
-#     docker image build --build-arg VERSION=0.2.0 -t losizm/barbershop:0.2.0 .
+#     docker image build --build-arg VERSION=x.y.z -t losizm/barbershop:x.y.z .
 ################################################################################
 FROM ubuntu:20.04
 COPY --from=eclipse-temurin:8 /opt/java/openjdk /opt/jdk8
