@@ -157,8 +157,13 @@
     }
 
     let section = document.querySelector('#comments');
-    let list    = section.querySelector('ul');
-    section.replaceChild(createList(comments), list);
+    let oldList = section.querySelector('ul');
+    let newList = createList(comments);
+
+    section.replaceChild(newList, oldList);
+
+    if (newList.lastChild)
+      newList.lastChild.scrollIntoView(true);
   }
 
   function addCommentHandler() {

@@ -26,8 +26,9 @@ body {
 }
 
 header.title {
-  margin: 0;
-  padding: 16px;
+  position: fixed;
+  top: 16px;
+  left: 16px;
 }
 
 header.title > h1 {
@@ -47,7 +48,9 @@ header.title > img {
 }
 
 footer.copyright {
-  margin: 12px 24px 16px 16px;
+  position: fixed;
+  bottom: 32px;
+  left: 16px;
   font-family: "Avenir Next", Helvetica, sans-serif;
   font-size: 0.67em;
   color: #735;
@@ -56,10 +59,15 @@ footer.copyright {
 #comments {
   background-color: #0c0c0c;
   color: #aaa;
-  margin: 0;
+  position: fixed;
+  top: 96px;
+  right: 0;
+  bottom: 64px;
+  left: 0;
   border-top: 1.5px solid #200;
   border-bottom: 1px solid #200;
   padding: 16px;
+  overflow: auto;
 }
 
 #comments > h1 {
@@ -70,7 +78,10 @@ footer.copyright {
 }
 
 #comments > form {
-  margin-top: 24px;
+  position: fixed;
+  bottom: 80px;
+  right: 0;
+  left: 0;
   text-align: center;
 }
 
@@ -94,6 +105,7 @@ footer.copyright {
   color: #300;
   outline: none;
   font-size: 14px;
+  width: 375px;
 }
 
 #comments > form > .comment-outbox > button[type="button"] {
@@ -213,4 +225,22 @@ footer.copyright {
 #attachment-list > .file-item:hover {
   background-color: #735;
   color: #000;
+}
+
+@media screen and (max-width: 800px) and (min-width: 601px) {
+  #comments > form > .comment-outbox > input[type="text"] {
+    width: 300px;
+  }
+}
+
+@media screen and (max-width: 640px) and (min-width: 321px) {
+  #comments > form > .comment-outbox > input[type="text"] {
+    width: 200px;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  #comments > form > .comment-outbox > input[type="text"] {
+    width: 150px;
+  }
 }
