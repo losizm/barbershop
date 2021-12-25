@@ -1,7 +1,7 @@
 organization := "com.github.losizm"
 name         := "barbershop"
-version      := "0.5.0"
-description  := "Example application using Scamper as web application framework"
+version      := "0.5.1"
+description  := "Example application using Scamper as the web framework"
 maintainer   := "carlos.conyers@hotmail.com"
 
 versionScheme := Some("early-semver")
