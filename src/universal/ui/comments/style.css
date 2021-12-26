@@ -107,6 +107,9 @@ footer.copyright {
   font-size: 14px;
   width: 375px;
 }
+#comments > form > .comment-outbox > input[type="text"]:disabled {
+  color: #500;
+}
 
 #comments > form > .comment-outbox > button[type="button"] {
   display: inline-block;
@@ -141,6 +144,8 @@ footer.copyright {
   color: #b79;
 }
 
+#comments > form > .comment-outbox > button[type="submit"]:disabled,
+#comments > form > .comment-outbox > button[type="submit"]:disabled:hover,
 #comments > form:invalid > .comment-outbox > button[type="submit"],
 #comments > form:invalid > .comment-outbox > button[type="submit"]:hover {
   background: #513;
@@ -148,17 +153,17 @@ footer.copyright {
   cursor: default;
 }
 
-#comments > ul {
-  list-style-type: none;
+ul#comment-list {
   margin: 0;
   padding: 0;
+  list-style-type: none;
 }
 
-#comments > ul > li + li {
+ul#comment-list > li + li {
   margin-top: 1em;
 }
 
-#comments > ul > li > div.time {
+ul#comment-list > li > div.time {
   display: block;
   margin: 0;
   padding: 0 0 2px 9px;
@@ -167,7 +172,7 @@ footer.copyright {
   font-size: 0.66em;
 }
 
-#comments > ul > li > div.text {
+ul#comment-list > li > div.text {
   display: inline-block;
   margin: 0;
   border-radius: 9px;
@@ -179,11 +184,11 @@ footer.copyright {
   cursor: pointer;
 }
 
-#comments > ul > li > div:hover.text {
+ul#comment-list > li > div:hover.text {
   background-color: #735;
 }
 
-#comments > ul > li > div.attachments > div.file {
+ul#comment-list > li > div.attachments > div.file {
   display: inline-block;
   margin: 0.4em 0.4em 0 0;
   border-radius: 9px;
@@ -195,24 +200,26 @@ footer.copyright {
   cursor: pointer;
 }
 
-#comments > ul > li > div.attachments > div:hover.file {
+ul#comment-list > li > div.attachments > div:hover.file {
   background-color: #597;
   color: #222;
 }
 
-#comments > ul > li > div.attachments > div.file > img {
+ul#comment-list > li > div.attachments > div.file > img {
   margin-right: 0.2em;
   vertical-align: sub;
 }
 
-#attachment-list {
-  display: block;
+ul#attachment-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
   text-align: center;
 }
 
-#attachment-list > .file-item {
+ul#attachment-list > li {
   display: inline-block;
-  margin: 0.4em 0.4em 0 0;
+  margin: 0.4em 0.2em 0 0.2em;
   border-radius: 9px;
   padding: 0.3em 0.8em;
   background-color: #243;
@@ -222,7 +229,7 @@ footer.copyright {
   cursor: pointer;
 }
 
-#attachment-list > .file-item:hover {
+ul#attachment-list > li:hover {
   background-color: #735;
   color: #000;
 }

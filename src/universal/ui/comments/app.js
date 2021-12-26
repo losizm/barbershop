@@ -52,11 +52,13 @@
   function postComment(text, attachments) {
     let req = new XMLHttpRequest();
     req.open('POST', '/api/comments', true);
-    req.addEventListener('load', () => {
+    req.addEventListener('loadend', () => {
       if (req.status >= 200 && req.status <= 299) {
         resetForm();
         loadComments();
       }
+
+      setPending(false);
     });
 
     if (attachments.length) {
@@ -72,6 +74,8 @@
       req.setRequestHeader('Content-Type', 'text/plain; charset=UTF-8');
       req.send(text);
     }
+
+    setPending(true);
   }
 
   function deleteComment(id) {
@@ -91,6 +95,17 @@
     a.href = `/api/attachments/${id}`;
     a.setAttribute("download", fileName);
     a.click();
+  }
+
+  function setPending(pending) {
+    let add  = document.querySelector('#comments form button[name="add-attachment"]');
+    add.disabled = pending;
+
+    let text = document.querySelector('#comments form input[name="text"]');
+    text.disabled = pending;
+
+    let send = document.querySelector('#comments form button[name="send"]');
+    send.disabled = pending;
   }
 
   function resetForm() {
@@ -127,6 +142,8 @@
   function setCommentList(comments) {
     function createList(comments) {
       let list = document.createElement('ul');
+      list.id = 'comment-list';
+
       comments.map(comment => createListItem(comment))
         .forEach(item => list.appendChild(item));
 
@@ -173,11 +190,11 @@
       return listItem;
     }
 
-    let section = document.querySelector('#comments');
-    let oldList = section.querySelector('ul');
+    let main    = document.querySelector('#comments');
+    let oldList = document.querySelector('#comment-list');
     let newList = createList(comments);
 
-    section.replaceChild(newList, oldList);
+    main.replaceChild(newList, oldList);
 
     if (newList.lastChild)
       newList.lastChild.scrollIntoView(true);
@@ -209,26 +226,25 @@
     let button = form.querySelector('button[name="add-attachment"]');
     let input  = form.querySelector('input[name="attachment"]');
 
-    button.onclick = () => {
+    button.addEventListener('click', () => {
       input.click();
       return false;
-    };
+    });
 
-    input.onchange = () => {
-      let list = document.createElement('section');
+    input.addEventListener('change', () => {
+      let list = document.createElement('ul');
       list.id = 'attachment-list';
 
       for (let i = 0; i < input.files.length; i++) {
         let file     = input.files[i];
-        let listItem = document.createElement('div');
-        let span     = document.createElement('span');
+        let listItem = document.createElement('li');
+        let strong   = document.createElement('strong');
 
-        span.innerHTML = '<strong>x</strong>&nbsp;&nbsp;';
+        strong.innerHTML = 'x&nbsp;&nbsp;';
 
         listItem.id = `attachment-file-${i}`;
-        listItem.className = 'file-item';
         listItem.title = 'Click to remove';
-        listItem.appendChild(span);
+        listItem.appendChild(strong);
         listItem.appendChild(document.createTextNode(`${file.name} - ${toFileSize(file.size)}`));
         listItem.addEventListener('click', () => deleteAttachment(i));
 
@@ -237,10 +253,10 @@
 
       form.replaceChild(list, form.querySelector("#attachment-list"));
       return false;
-    };
+    });
 
     form.addEventListener('reset', () => {
-      let list = document.createElement('section');
+      let list = document.createElement('ul');
       list.id = 'attachment-list';
       form.replaceChild(list, form.querySelector("#attachment-list"));
       return false;

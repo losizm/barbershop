@@ -27,19 +27,19 @@ limitations under the License.
     <img src="logo.svg" width="32">
     <h1>Barbershop</h1>
   </header>
-  <section id="comments">
+  <main id="comments">
     <h1>Comments</h1>
-    <ul></ul>
+    <ul id="comment-list"></ul>
     <form>
       <div class="comment-outbox">
         <button type="button" name="add-attachment" title="Add attachment..."><img src="paperclip.svg"></button>
         <input type="file" name="attachment" multiple style="display: none;">
         <input type="text" name="text" placeholder="Comment..." required>
-        <button type="submit">Send</button>
+        <button type="submit" name="send">Send</button>
       </div>
-      <section id="attachment-list"></section>
+      <ul id="attachment-list"></ul>
     </form>
-  </section>
+  </main>
   <footer class="copyright">&copy; 2021 Carlos Conyers. All rights reserved.</footer>
   <script src="app.js"></script>
 </body>
