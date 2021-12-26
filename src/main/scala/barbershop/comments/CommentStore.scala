@@ -102,12 +102,13 @@ class CommentStore:
    *
    * - `minId` &ndash; lower bound of comment identifier
    * - `maxId` &ndash; upper bound of comment identifier
-   * - `minTime` &ndash; lower bound of comment time; supplied as Epoch
-   *   milliseconds or timestamp formatted as `yyyy-MM-ddTmm:hh:ssZ`
-   * - `maxTime` &ndash; upper bound of comment time; supplied as Epoch
-   *   milliseconds or timestamp formatted as `yyyy-MM-ddTmm:hh:ssZ`
+   * - `minTime`<sup>&dagger;</sup> &ndash; lower bound of comment time
+   * - `maxTime`<sup>&dagger;</sup> &ndash; upper bound of comment time
    * - `offset` &ndash; number of leading comments to drop
    * - `limit` &ndash; maximum number of comments to list
+   *
+   * <small>&dagger; Supplied as Epoch milliseconds or timestamp formatted as
+   * `yyyy-MM-ddTHH:mm:ssZ`</small>
    *
    * @param query query parameters
    */
@@ -122,7 +123,7 @@ class CommentStore:
     comments.values
       .filter(comment => comment.id.between(minId, maxId) && comment.time.between(minTime, maxTime))
       .toSeq
-      .sortBy(_._1)
+      .sortBy(_.id)
       .drop(offset)
       .take(limit)
 

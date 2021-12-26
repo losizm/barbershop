@@ -29,6 +29,16 @@
       return `< 1 KiB`;
   }
 
+  function loadSettings() {
+    let req = new XMLHttpRequest();
+    req.open('GET', '/api/comments/settings');
+    req.addEventListener('load', () => {
+      if (req.status >= 200 && req.status <= 299)
+        setCommentTextMaxLength(JSON.parse(req.responseText));
+    });
+    req.send(null);
+  }
+
   function loadComments() {
     let req = new XMLHttpRequest();
     req.open('GET', '/api/comments');
@@ -105,6 +115,13 @@
 
   function setComment(text) {
     document.querySelector('#comments form input[name="text"]').value = text;
+  }
+
+  function setCommentTextMaxLength(settings) {
+    if (settings.textMaxLength) {
+      let input = document.querySelector('#comments form input[name="text"]');
+      input.maxLength = settings.textMaxLength;
+    }
   }
 
   function setCommentList(comments) {
@@ -232,5 +249,6 @@
 
   addCommentHandler();
   addAttachmentHandler();
+  loadSettings();
   loadComments();
 })();

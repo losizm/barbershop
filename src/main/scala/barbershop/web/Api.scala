@@ -21,7 +21,7 @@ import barbershop.logging.Logger
 
 import com.typesafe.config.Config
 
-import grapple.json.{ Json, iterableToJsonArray }
+import grapple.json.{ Json, JsonObjectBuilder, iterableToJsonArray }
 
 import java.nio.file.{ Files, Path }
 
@@ -50,8 +50,16 @@ class Api(config: Config) extends RouterApplication:
   private val comments = CommentStore()
   private val file     = config.getOption[Path]("comment.file")
 
-  private given BodyParser[String]    = BodyParser.string(config.getMemorySizeInt("comment.maxTextLength"))
-  private given BodyParser[Multipart] = Multipart.getBodyParser(maxLength = config.getMemorySizeInt("comment.maxTotalLength"))
+  private val textMaxLength  = config.getMemorySizeInt("comment.textMaxLength")
+  private val totalMaxLength = config.getMemorySizeInt("comment.totalMaxLength")
+
+  private val settings = JsonObjectBuilder()
+    .add("textMaxLength", textMaxLength)
+    .add("totalMaxLength", totalMaxLength)
+    .build()
+
+  private given BodyParser[String]    = BodyParser.string(textMaxLength)
+  private given BodyParser[Multipart] = Multipart.getBodyParser(maxLength = totalMaxLength)
 
   /** Applies API to supplied router. */
   def apply(router: Router): Unit =
@@ -75,6 +83,11 @@ class Api(config: Config) extends RouterApplication:
           file.foreach(comments.save)
         catch case err: Exception =>
           logger.error("Cannot save comments", err)
+    }
+
+    router.get("/comments/settings") { req =>
+      logger.debug(s"Settings retrieved")
+      Ok(settings)
     }
 
     router.get("/comments") { req =>

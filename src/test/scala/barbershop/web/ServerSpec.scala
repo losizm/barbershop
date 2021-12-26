@@ -18,7 +18,7 @@ package web
 
 import barbershop.comments.{ Comment, jsonValueToComment }
 
-import grapple.json.{ JsonObject, JsonValue }
+import grapple.json.{ JsonObject, JsonValue, \, jsonValueToInt }
 
 import java.io.File
 import java.time.Instant
@@ -45,6 +45,18 @@ class ServerSpec extends org.scalatest.flatspec.AnyFlatSpec:
     val time1 = AtomicReference[Instant]()
     val time2 = AtomicReference[Instant]()
     val time3 = AtomicReference[Instant]()
+
+    info("get settings")
+    client.get(s"$apiUrl/comments/settings") { res =>
+      assert(res.status == Ok)
+
+      val settings       = res.as[JsonValue]
+      val textMaxLength  = (settings \ "textMaxLength").as[Int]
+      val totalMaxLength = (settings \ "totalMaxLength").as[Int]
+
+      assert(textMaxLength  == apiConfig.getMemorySizeInt("comment.textMaxLength"))
+      assert(totalMaxLength == apiConfig.getMemorySizeInt("comment.totalMaxLength"))
+    }
 
     info("add first comment")
     client.post(s"$apiUrl/comments", body = "Hello, barbershop!") { res =>
