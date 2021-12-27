@@ -29,6 +29,31 @@
       return `< 1 KiB`;
   }
 
+  function toErrorMessage(code) {
+    switch (code) {
+      case 0:   return 'Could not connect to server';
+      case 400: return '400 Bad Request';
+      case 401: return '401 Unauthorized';
+      case 403: return '403 Forbidden';
+      case 404: return '404 Not Found';
+      case 408: return '408 Request Timeout';
+      case 413: return '413 Payload Too Large';
+      case 500: return '500 Internal Server Error';
+      case 501: return '501 Not Implemented';
+      case 502: return '502 Bad Gateway';
+      case 503: return '503 Service Unavailable';
+      case 504: return '504 Gateway Timeout';
+
+      default:
+        if      (code >= 100 && code <= 199) return `${code} Informational`;
+        else if (code >= 200 && code <= 299) return `${code} Successful`;
+        else if (code >= 300 && code <= 399) return `${code} Redirection`;
+        else if (code >= 400 && code <= 499) return `${code} Client Error`;
+        else if (code >= 500 && code <= 599) return `${code} Server Error`;
+        else return `${code} Unknown Error`;
+    }
+  }
+
   function loadSettings() {
     let req = new XMLHttpRequest();
     req.open('GET', '/api/comments/settings');
@@ -50,12 +75,16 @@
   }
 
   function postComment(text, attachments) {
+    removeErrorMessage();
+
     let req = new XMLHttpRequest();
     req.open('POST', '/api/comments', true);
     req.addEventListener('loadend', () => {
       if (req.status >= 200 && req.status <= 299) {
         resetForm();
         loadComments();
+      } else {
+        addErrorMessage(req.status);
       }
 
       setPending(false);
@@ -91,13 +120,49 @@
   }
 
   function downloadAttachment(id, fileName) {
-    let a = document.createElement("a");
+    let a = document.createElement('a');
     a.href = `/api/attachments/${id}`;
-    a.setAttribute("download", fileName);
+    a.setAttribute('download', fileName);
     a.click();
   }
 
+  function addErrorMessage(code) {
+    let message = document.createElement('div');
+    message.className = 'error-message';
+    message.title = 'Click to dismiss';
+
+    if (code) {
+      let image = document.createElement('img');
+      image.src = 'error.svg';
+      message.appendChild(image);
+    } else {
+      let strong = document.createElement('strong');
+      strong.innerHTML = '&times;&nbsp;&nbsp;';
+      message.appendChild(strong);
+    }
+
+    message.appendChild(document.createTextNode(toErrorMessage(code)));
+    message.addEventListener('click', () => removeErrorMessage());
+
+    let error = document.createElement('div');
+    error.id = 'error';
+    error.appendChild(message);
+
+    let form = document.querySelector('#comments form');
+    form.replaceChild(error, form.querySelector('#error'));
+  }
+
+  function removeErrorMessage() {
+    let error = document.createElement('div');
+    error.id = 'error';
+
+    let form = document.querySelector('#comments form');
+    form.replaceChild(error, form.querySelector('#error'));
+  }
+
   function setPending(pending) {
+    isPending = pending;
+
     let add  = document.querySelector('#comments form button[name="add-attachment"]');
     add.disabled = pending;
 
@@ -106,6 +171,17 @@
 
     let send = document.querySelector('#comments form button[name="send"]');
     send.disabled = pending;
+
+    let progress = document.querySelector('#progress');
+
+    if (pending) {
+      setTimeout(() => {
+        if (isPending)
+          progress.style.display = 'block';
+      }, 1000);
+    } else {
+      progress.style.display = 'none';
+    }
   }
 
   function resetForm() {
@@ -222,7 +298,7 @@
       input.files[index].removed = true;
     }
 
-    let form   = document.querySelector('#comments > form');
+    let form   = document.querySelector('#comments form');
     let button = form.querySelector('button[name="add-attachment"]');
     let input  = form.querySelector('input[name="attachment"]');
 
@@ -240,7 +316,7 @@
         let listItem = document.createElement('li');
         let strong   = document.createElement('strong');
 
-        strong.innerHTML = 'x&nbsp;&nbsp;';
+        strong.innerHTML = '&times;&nbsp;&nbsp;';
 
         listItem.id = `attachment-file-${i}`;
         listItem.title = 'Click to remove';
@@ -251,17 +327,19 @@
         list.appendChild(listItem);
       }
 
-      form.replaceChild(list, form.querySelector("#attachment-list"));
+      form.replaceChild(list, form.querySelector('#attachment-list'));
       return false;
     });
 
     form.addEventListener('reset', () => {
       let list = document.createElement('ul');
       list.id = 'attachment-list';
-      form.replaceChild(list, form.querySelector("#attachment-list"));
+      form.replaceChild(list, form.querySelector('#attachment-list'));
       return false;
     });
   }
+
+  let isPending = false;
 
   addCommentHandler();
   addAttachmentHandler();

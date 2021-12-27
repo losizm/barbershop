@@ -153,6 +153,52 @@ footer.copyright {
   cursor: default;
 }
 
+#progress {
+  margin-bottom: .33em;
+}
+
+#progress > .box {
+  display: inline-block;
+  border-radius: 1.5px;
+  width: 5px;
+  height: 5px;
+  animation: pulsar 1s linear infinite;
+}
+
+#progress > .box:nth-child(3n+1) {
+  background-color: #902;
+}
+
+#progress > .box:nth-child(3n+2) {
+  background-color: #c35;
+}
+
+#progress > .box:nth-child(3n) {
+  background-color: #f68;
+}
+
+#error {
+  margin-bottom: .33em;
+}
+
+#error > .error-message {
+  display: inline-block;
+  border-radius: 0.75em;
+  padding: 0.25em 0.5em;
+  background-color: #a13;
+  color: #ccc;
+  font-family: "Avenir Next", Helvetica, sans-serif;
+  font-style: oblique;
+  font-size: 0.75em;
+  cursor: pointer;
+  animation: shake 0.1s linear 2;
+}
+
+#error > .error-message > img {
+  margin-right: 0.3em;
+  vertical-align: bottom;
+}
+
 ul#comment-list {
   margin: 0;
   padding: 0;
@@ -186,6 +232,10 @@ ul#comment-list > li > div.text {
 
 ul#comment-list > li > div:hover.text {
   background-color: #735;
+}
+
+ul#comment-list > li:last-child {
+  margin-bottom: 4em;
 }
 
 ul#comment-list > li > div.attachments > div.file {
@@ -232,6 +282,18 @@ ul#attachment-list > li {
 ul#attachment-list > li:hover {
   background-color: #735;
   color: #000;
+}
+
+@keyframes pulsar {
+  20% { background-color: #902; }
+  80% { background-color: #f68; }
+}
+
+@keyframes shake {
+    0% { transform: translate(0); }
+   20% { transform: translate(0.75em, 0); }
+   80% { transform: translate(-0.75em, 0); }
+  100% { transform: translate(0); }
 }
 
 @media screen and (max-width: 800px) and (min-width: 601px) {
