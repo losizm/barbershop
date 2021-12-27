@@ -188,7 +188,7 @@ The following query parameters may be supplied in URL to filter comments:
 *  `offset` &ndash; number of leading comments to drop
 *  `limit` &ndash; maximum number of comments to list
 
-<small>&dagger; Supplied as Epoch milliseconds or timestamp formatted as `yyyy-MM-ddTmm:hh:ssZ`</small>
+<small>&dagger; Supplied as Epoch milliseconds or timestamp formatted as `yyyy-MM-ddTHH:mm:ssZ`</small>
 
 **To update a comment:**
 ```sh
