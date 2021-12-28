@@ -19,19 +19,15 @@
     const MiB = KiB * 1024;
     const GiB = MiB * 1024;
 
-    if (size >= GiB)
-      return `${Math.round(size / GiB)} GiB`;
-    else if (size >= MiB)
-      return `${Math.round(size / MiB)} MiB`;
-    else if (size >= KiB)
-      return `${Math.round(size / KiB)} KiB`;
-    else
-      return `< 1 KiB`;
+    if      (size >= GiB) return `${Math.round(size / GiB)} GiB`;
+    else if (size >= MiB) return `${Math.round(size / MiB)} MiB`;
+    else if (size >= KiB) return `${Math.round(size / KiB)} KiB`;
+    else return `< 1 KiB`;
   }
 
   function toErrorMessage(code) {
     switch (code) {
-      case 0:   return 'Could not connect to server';
+      case 0:   return 'Connection refused or reset';
       case 400: return '400 Bad Request';
       case 401: return '401 Unauthorized';
       case 403: return '403 Forbidden';
@@ -57,7 +53,7 @@
   function loadSettings() {
     let req = new XMLHttpRequest();
     req.open('GET', '/api/comments/settings');
-    req.addEventListener('load', () => {
+    req.addEventListener('loadend', () => {
       if (req.status >= 200 && req.status <= 299)
         setCommentTextMaxLength(JSON.parse(req.responseText));
     });
@@ -67,7 +63,7 @@
   function loadComments() {
     let req = new XMLHttpRequest();
     req.open('GET', '/api/comments');
-    req.addEventListener('load', () => {
+    req.addEventListener('loadend', () => {
       if (req.status >= 200 && req.status <= 299)
         setCommentList(JSON.parse(req.responseText));
     });
@@ -78,7 +74,7 @@
     removeErrorMessage();
 
     let req = new XMLHttpRequest();
-    req.open('POST', '/api/comments', true);
+    req.open('POST', '/api/comments');
     req.addEventListener('loadend', () => {
       if (req.status >= 200 && req.status <= 299) {
         resetForm();
@@ -111,19 +107,12 @@
     if (confirm('Do you want to delete this comment?')) {
       let req = new XMLHttpRequest();
       req.open('DELETE', `/api/comments/${id}`);
-      req.addEventListener('load', () => {
+      req.addEventListener('loadend', () => {
         if (req.status >= 200 && req.status <= 299)
           loadComments();
       });
       req.send(null);
     }
-  }
-
-  function downloadAttachment(id, fileName) {
-    let a = document.createElement('a');
-    a.href = `/api/attachments/${id}`;
-    a.setAttribute('download', fileName);
-    a.click();
   }
 
   function addErrorMessage(code) {
@@ -228,25 +217,26 @@
 
     function createListItem(comment) {
       let time = document.createElement('div');
-      time.appendChild(document.createTextNode(comment.time));
       time.className = 'time';
+      time.appendChild(document.createTextNode(comment.time));
 
       let text = document.createElement('div');
-      text.appendChild(document.createTextNode(comment.text));
       text.className = 'text';
       text.title = 'Click to delete';
+      text.appendChild(document.createTextNode(comment.text));
       text.addEventListener('click', () => deleteComment(comment.id));
 
       let files = comment.attachments.map((file) => {
         let image = document.createElement('img');
         image.src = 'download.svg';
 
-        let attachment = document.createElement('div');
-        attachment.appendChild(image);
-        attachment.appendChild(document.createTextNode(`${file.name} - ${toFileSize(file.size)}`));
+        let attachment = document.createElement('a');
         attachment.className = 'file';
         attachment.title = 'Click to download';
-        attachment.addEventListener('click', () => downloadAttachment(file.id, file.name));
+        attachment.href = `/api/attachments/${file.id}`;
+        attachment.download = file.name;
+        attachment.appendChild(image);
+        attachment.appendChild(document.createTextNode(`${file.name} - ${toFileSize(file.size)}`));
         return attachment;
       });
 
@@ -281,7 +271,7 @@
 
     form.onsubmit = () => {
       let text = getComment().trim();
-      form.querySelector('input[name="text"]').value = text;
+      setComment(text);
 
       if (text !== '')
         postComment(text, getAttachments());

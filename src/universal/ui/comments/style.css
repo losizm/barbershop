@@ -238,7 +238,7 @@ ul#comment-list > li:last-child {
   margin-bottom: 4em;
 }
 
-ul#comment-list > li > div.attachments > div.file {
+ul#comment-list > li > div.attachments > a.file {
   display: inline-block;
   margin: 0.4em 0.4em 0 0;
   border-radius: 9px;
@@ -247,15 +247,16 @@ ul#comment-list > li > div.attachments > div.file {
   color: #111;
   font-family: "Avenir Next", Helvetica, sans-serif;
   font-size: 0.85em;
+  text-decoration: none;
   cursor: pointer;
 }
 
-ul#comment-list > li > div.attachments > div:hover.file {
+ul#comment-list > li > div.attachments > a:hover.file {
   background-color: #597;
   color: #222;
 }
 
-ul#comment-list > li > div.attachments > div.file > img {
+ul#comment-list > li > div.attachments > a.file > img {
   margin-right: 0.2em;
   vertical-align: sub;
 }
