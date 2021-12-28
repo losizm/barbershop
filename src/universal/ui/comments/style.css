@@ -154,27 +154,27 @@ footer.copyright {
 }
 
 #progress {
-  margin-bottom: .33em;
+  margin-bottom: 0.33em;
 }
 
-#progress > .box {
+#progress > .meter {
   display: inline-block;
   border-radius: 1.5px;
   width: 5px;
   height: 5px;
-  animation: pulsar 1s linear infinite;
+  animation: redify 1s linear infinite;
 }
 
-#progress > .box:nth-child(3n+1) {
-  background-color: #902;
+#progress > .meter:nth-child(3n+1) {
+  background-color: #f68;
 }
 
-#progress > .box:nth-child(3n+2) {
+#progress > .meter:nth-child(3n+2) {
   background-color: #c35;
 }
 
-#progress > .box:nth-child(3n) {
-  background-color: #f68;
+#progress > .meter:nth-child(3n) {
+  background-color: #902;
 }
 
 #error {
@@ -284,9 +284,10 @@ ul#attachment-list > li:hover {
   color: #000;
 }
 
-@keyframes pulsar {
-  20% { background-color: #902; }
-  80% { background-color: #f68; }
+@keyframes redify {
+  20% { background-color: #f68; }
+  60% { background-color: #902; }
+  80% { background-color: #902; }
 }
 
 @keyframes shake {
