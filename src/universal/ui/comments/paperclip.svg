@@ -25,7 +25,7 @@ limitations under the License.
      viewBox="0 0 150 150">
   <title>Paperclip</title>
   <path id="paperclip"
-    d="M 125,115 h -105 q -30,-40 0,-80 h 110 q 30,25 0,55 h -90 q -20,-15 0,-30 h 85"
+    d="M 118,115 h -80 c -55,-5 -55,-75 0,-80 h 77.5 c 40,5 40,50 0,55 h -70 c -30,-2.5 -30,-27.5 0,-30 h 72.5"
     style="stroke: #500; stroke-width: 12.5; fill: none;"
     transform="rotate(-45, 75, 75)"/>
 </svg>
