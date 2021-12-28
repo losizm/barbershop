@@ -18,11 +18,11 @@
 }
 
 body {
-  background-color: #000;
-  font-family: Sansita, "Times New Roman", serif;
-  color: #ccc;
   margin: 0;
   padding: 0;
+  background-color: #000;
+  color: #ccc;
+  font-family: "Avenir Next", Helvetica, sans-serif;
 }
 
 header.title {
@@ -36,6 +36,7 @@ header.title > h1 {
   margin: 0;
   padding: 0;
   color: #735;
+  font-family: Sansita, "Times New Roman", serif;
   font-size: 2.33em;
   letter-spacing: -0.05em;
   vertical-align: middle;
@@ -51,7 +52,6 @@ footer.copyright {
   position: fixed;
   bottom: 32px;
   left: 16px;
-  font-family: "Avenir Next", Helvetica, sans-serif;
   font-size: 0.67em;
   color: #735;
 }
@@ -73,6 +73,7 @@ footer.copyright {
 #comments > h1 {
   margin: 0 0 8px 0;
   color: #468;
+  font-family: Sansita, "Times New Roman", serif;
   font-size: 1.67em;
   text-align: center;
 }
@@ -118,7 +119,6 @@ footer.copyright {
   padding: 0;
   background: none;
   color: #a68;
-  font-family: "Avenir Next", Helvetica, sans-serif;
   font-size: 12px;
   text-decoration: none;
   vertical-align: middle;
@@ -133,7 +133,6 @@ footer.copyright {
   padding: 0.5em 1em 0.4em 1em;
   background: #513;
   color: #a68;
-  font-family: "Avenir Next", Helvetica, sans-serif;
   font-size: 12px;
   text-decoration: none;
   cursor: pointer;
@@ -187,7 +186,6 @@ footer.copyright {
   padding: 0.25em 0.5em;
   background-color: #a13;
   color: #ccc;
-  font-family: "Avenir Next", Helvetica, sans-serif;
   font-style: oblique;
   font-size: 0.75em;
   cursor: pointer;
@@ -214,7 +212,6 @@ ul#comment-list > li > div.time {
   margin: 0;
   padding: 0 0 2px 9px;
   color: #557;
-  font-family: "Avenir Next", Helvetica, sans-serif;
   font-size: 0.66em;
 }
 
@@ -225,7 +222,6 @@ ul#comment-list > li > div.text {
   padding: 3px 9px;
   background-color: #579;
   color: #000;
-  font-family: "Avenir Next", Helvetica, sans-serif;
   font-size: 0.85em;
   cursor: pointer;
 }
@@ -245,7 +241,6 @@ ul#comment-list > li > div.attachments > a.file {
   padding: 3px 9px;
   background-color: #486;
   color: #111;
-  font-family: "Avenir Next", Helvetica, sans-serif;
   font-size: 0.85em;
   text-decoration: none;
   cursor: pointer;
@@ -275,7 +270,6 @@ ul#attachment-list > li {
   padding: 0.3em 0.8em;
   background-color: #243;
   color: #aaa;
-  font-family: "Avenir Next", Helvetica, sans-serif;
   font-size: 0.85em;
   cursor: pointer;
 }
@@ -308,10 +302,22 @@ ul#attachment-list > li:hover {
   #comments > form > .comment-outbox > input[type="text"] {
     width: 200px;
   }
+
+  footer.copyright {
+    right: 0;
+    left: 0;
+    text-align: center;
+  }
 }
 
 @media screen and (max-width: 320px) {
   #comments > form > .comment-outbox > input[type="text"] {
     width: 150px;
+  }
+
+  footer.copyright {
+    right: 0;
+    left: 0;
+    text-align: center;
   }
 }
