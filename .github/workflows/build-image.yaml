@@ -1,0 +1,29 @@
+name: build-image
+on:
+  release:
+    types: [published]
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-java@v2
+      with:
+        java-version: '8'
+        distribution: temurin
+    - name: Test and package application
+      run: sbt test packageZipTarball
+    - name: Build container image
+      run: |
+        docker build \
+          --build-arg VERSION=$GITHUB_REF_NAME \
+          --tag ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME \
+          .
+    - name: Log into container registry
+      run: |
+        docker login ghcr.io \
+          --username $GITHUB_ACTOR \
+          --password ${{ secrets.GITHUB_TOKEN }}
+    - name: Push container image
+      run: docker push ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME
