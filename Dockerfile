@@ -15,10 +15,15 @@ ARG VERSION=0.0.0
 ADD ["/target/universal/barbershop-${VERSION}.tgz", "/opt"]
 RUN cd /opt && \
     ln -s "barbershop-${VERSION}" barbershop && \
-    chmod +x barbershop/bin/*
+    chmod +x barbershop/bin/* && \
+    groupadd -g 1000 barber && \
+    useradd -Mg barber -u 1000 -s /bin/bash barber && \
+    chown -R barber:barber "barbershop-${VERSION}" && \
+    chown -h barber:barber barbershop
 ENV BARBERSHOP_VERSION="$VERSION" \
     BARBERSHOP_HOME=/opt/barbershop \
     PATH="/opt/barbershop/bin:$PATH"
+USER barber:barber
 WORKDIR $BARBERSHOP_HOME
 EXPOSE 9999
 ENTRYPOINT ["barbershop"]
