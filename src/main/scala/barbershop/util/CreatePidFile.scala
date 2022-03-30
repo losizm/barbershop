@@ -19,7 +19,7 @@ package util
 import java.io.IOException
 import java.nio.file.{ Files, Path, Paths }
 
-import little.io.PathExt
+import little.io.PathMethods
 
 /** Provides utility to create PID file. */
 object CreatePidFile:

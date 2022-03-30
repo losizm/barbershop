@@ -24,7 +24,7 @@ import java.nio.charset.Charset
 import java.nio.file.Path
 import java.util.zip.{ ZipEntry, ZipInputStream, ZipOutputStream }
 
-import little.io.{ InputStreamExt, PathExt }
+import little.io.{ InputStreamMethods, PathMethods }
 
 import scala.collection.mutable.HashMap as MutableMap
 

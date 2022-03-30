@@ -25,8 +25,8 @@ import grapple.json.{ Json, JsonObjectBuilder, iterableToJsonArray }
 
 import java.nio.file.{ Files, Path }
 
-import little.config.{ ConfigExt, stringDelegate }
-import little.io.FileExt
+import little.config.{ ConfigMethods, stringDelegate }
+import little.io.FileMethods
 
 import scamper.http.{ BodyParser, HttpRequest, Uri }
 import scamper.http.ResponseStatus.Registry.*

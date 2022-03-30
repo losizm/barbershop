@@ -7,7 +7,7 @@ maintainer   := "carlos.conyers@hotmail.com"
 versionScheme := Some("early-semver")
 
 scalaVersion  := "3.1.0"
-scalacOptions := Seq("-deprecation", "-feature", "-new-syntax", "-Xfatal-warnings", "-Yno-experimental")
+scalacOptions := Seq("-deprecation", "-feature", "-new-syntax", "-Werror", "-Yno-experimental")
 
 Compile / doc / scalacOptions := Seq(
   "-project", name.value.capitalize,
@@ -17,10 +17,10 @@ Compile / doc / scalacOptions := Seq(
 
 libraryDependencies := Seq(
   "ch.qos.logback"    %  "logback-classic" % "1.2.6",
-  "com.github.losizm" %% "grapple"         % "10.0.0",
-  "com.github.losizm" %% "little-config"   % "2.0.0",
-  "com.github.losizm" %% "little-io"       % "7.0.0",
-  "com.github.losizm" %% "scamper"         % "32.0.2",
+  "com.github.losizm" %% "grapple"         % "11.0.0",
+  "com.github.losizm" %% "little-config"   % "3.0.0",
+  "com.github.losizm" %% "little-io"       % "8.0.0",
+  "com.github.losizm" %% "scamper"         % "32.1.2",
   "com.typesafe"      %  "config"          % "1.4.1",
   "org.scalatest"     %% "scalatest"       % "3.2.10" % Test
 )

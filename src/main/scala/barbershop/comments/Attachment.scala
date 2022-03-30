@@ -18,7 +18,7 @@ package comments
 
 import java.io.File
 
-import little.io.FileExt
+import little.io.FileMethods
 
 import scamper.http.types.MediaType
 
