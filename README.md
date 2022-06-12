@@ -1,8 +1,7 @@
 # Barbershop
 
-**Barbershop** is an example application using [Scamper](https://github.com/losizm/scamper/)
-as the web framework. It features a REST API along with a single-page
-application to manage arbitrary comments.
+**Barbershop** is an example application using the [Scamper](https://github.com/losizm/scamper/)
+web framework. It features a REST API along with a single-page application to manage arbitrary comments.
 
 ## Getting Started
 
@@ -76,17 +75,17 @@ as system properties:
 A successful startup prints something like the following to the terminal:
 
 ```log
-[2021-12-23T09:36:48.445-05:00][INFO] barbershop.web.Server - localhost:8080 - Starting server
-[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Secure: false
-[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Logger: Logger("barbershop.web.Server")
-[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Backlog Size: 20
-[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Pool Size: 4
-[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Queue Size: 16
-[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Buffer Size: 8192
-[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Read Timeout: 250
-[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Header Limit: 20
-[2021-12-23T09:36:48.447-05:00][INFO] barbershop.web.Server - localhost:8080 - Keep-Alive: disabled
-[2021-12-23T09:36:48.449-05:00][INFO] barbershop.web.Server - localhost:8080 - Server is up and running
+[2022-06-11T23:30:58.999-04:00][INFO] scamper.http.server.HttpServerImpl - 0.0.0.0:8080 - Calling start lifecycle hooks
+[2022-06-11T23:30:59.003-04:00][INFO] scamper.http.server.HttpServerImpl - 0.0.0.0:8080 - Starting server
+[2022-06-11T23:30:59.004-04:00][INFO] scamper.http.server.HttpServerImpl - 0.0.0.0:8080 - Secure: false
+[2022-06-11T23:30:59.004-04:00][INFO] scamper.http.server.HttpServerImpl - 0.0.0.0:8080 - Backlog Size: 20
+[2022-06-11T23:30:59.004-04:00][INFO] scamper.http.server.HttpServerImpl - 0.0.0.0:8080 - Pool Size: 4
+[2022-06-11T23:30:59.004-04:00][INFO] scamper.http.server.HttpServerImpl - 0.0.0.0:8080 - Queue Size: 16
+[2022-06-11T23:30:59.004-04:00][INFO] scamper.http.server.HttpServerImpl - 0.0.0.0:8080 - Buffer Size: 8192
+[2022-06-11T23:30:59.004-04:00][INFO] scamper.http.server.HttpServerImpl - 0.0.0.0:8080 - Read Timeout: 250
+[2022-06-11T23:30:59.004-04:00][INFO] scamper.http.server.HttpServerImpl - 0.0.0.0:8080 - Header Limit: 20
+[2022-06-11T23:30:59.004-04:00][INFO] scamper.http.server.HttpServerImpl - 0.0.0.0:8080 - Keep-Alive: disabled
+[2022-06-11T23:30:59.006-04:00][INFO] scamper.http.server.HttpServerImpl - 0.0.0.0:8080 - Server is up and running
 ```
 
 When the application is successfully started, a PID file is created at
