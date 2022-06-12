@@ -16,15 +16,13 @@
 package barbershop
 package web
 
-import barbershop.logging.Logger
-
 import scamper.http.HttpResponse
 import scamper.http.server.{ ResponseFilter, ServerHttpMessage }
 
 /** Provides response filter to log response. */
 object ResponseLogger extends ResponseFilter:
   private val eol    = System.getProperty("line.separator")
-  private val logger = Logger("barbershop.web.ResponseLogger")
+  private val logger = org.slf4j.LoggerFactory.getLogger("barbershop.web.ResponseLogger")
 
   /**
    * Logs status line and headers.
@@ -34,11 +32,14 @@ object ResponseLogger extends ResponseFilter:
    * @return response
    */
   def apply(res: HttpResponse): HttpResponse =
-    logger.info("%s:%d - Outgoing response (correlate=%s)%n%s%n%s%n",
+    logger.info("{}:{} - Outgoing response (correlate={}){}{}{}{}{}",
       res.server.host.getHostName,
       res.server.port,
       res.correlate,
+      eol,
       res.startLine,
-      res.headers.mkString(eol)
+      eol,
+      res.headers.mkString(eol),
+      eol
     )
     res

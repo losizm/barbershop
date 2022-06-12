@@ -16,8 +16,6 @@
 package barbershop
 package web
 
-import barbershop.logging.Logger
-
 import com.typesafe.config.Config
 
 import little.config.given
@@ -64,7 +62,6 @@ class Server(config: Config): //
   def start(): Unit = synchronized {
     if server == null then
       server = ServerApplication()
-        .configureLogger()
         .configureBacklogSize()
         .configurePoolSize()
         .configureQueueSize()
@@ -84,9 +81,6 @@ class Server(config: Config): //
   }
 
   extension (app: ServerApplication)
-    private def configureLogger(): ServerApplication =
-      app.logger(Logger("barbershop.web.Server"))
-
     private def configureBacklogSize(): ServerApplication =
       app.backlogSize(config.getInt("server.backlogSize"))
 

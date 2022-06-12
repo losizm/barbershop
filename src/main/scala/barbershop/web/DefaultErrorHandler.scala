@@ -17,7 +17,6 @@ package barbershop
 package web
 
 import barbershop.comments.CannotReadComment
-import barbershop.logging.Logger
 
 import grapple.json.{ Json, JsonObjectBuilder, JsonOutput }
 
@@ -30,7 +29,7 @@ import ResponseStatus.Registry.*
 
 /** Provides default error handler. */
 object DefaultErrorHandler extends ErrorHandler:
-  private val logger = Logger("barbershop.web.DefaultErrorHandler")
+  private val logger = org.slf4j.LoggerFactory.getLogger("barbershop.web.DefaultErrorHandler")
 
   /** Creates response for request. */
   def apply(req: HttpRequest): PartialFunction[Throwable, HttpResponse] =

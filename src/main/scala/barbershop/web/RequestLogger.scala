@@ -16,15 +16,13 @@
 package barbershop
 package web
 
-import barbershop.logging.Logger
-
 import scamper.http.HttpRequest
 import scamper.http.server.{ RequestHandler, ServerHttpMessage }
 
 /** Provides request handler to log request. */
 object RequestLogger extends RequestHandler:
   private val eol    = System.getProperty("line.separator")
-  private val logger = Logger("barbershop.web.RequestLogger")
+  private val logger = org.slf4j.LoggerFactory.getLogger("barbershop.web.RequestLogger")
 
   /**
    * Logs request line and headers.
@@ -34,11 +32,14 @@ object RequestLogger extends RequestHandler:
    * @return request
    */
   def apply(req: HttpRequest): HttpRequest =
-    logger.info("%s:%d - Incoming request (correlate=%s)%n%s%n%s%n",
+    logger.info("{}:{} - Incoming request (correlate={}){}{}{}{}{}",
       req.server.host.getHostName,
       req.server.port,
       req.correlate,
+      eol,
       req.startLine,
-      req.headers.mkString(eol)
+      eol,
+      req.headers.mkString(eol),
+      eol
     )
     req

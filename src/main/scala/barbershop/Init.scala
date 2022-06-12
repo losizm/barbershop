@@ -16,7 +16,6 @@
 package barbershop
 
 import barbershop.web.Server as WebServer
-import barbershop.logging.Logger
 import barbershop.util.CreatePidFile
 
 import java.nio.file.{ Files, Path, Paths }
@@ -27,7 +26,7 @@ import scala.util.Try
 
 /** Provides entry point to application. */
 object Init:
-  private lazy val logger = Logger("barbershop.Init")
+  private lazy val logger = org.slf4j.LoggerFactory.getLogger("barbershop.Init")
 
   /**
    * Starts application.
@@ -61,7 +60,7 @@ object Init:
 
   private def createPidFile: Path =
     val fileName = Paths.get(config.getString("barbershop.pid.file"))
-    logger.debug(s"""Creating PID file: $fileName""")
+    logger.debug(s"Creating PID file: $fileName")
     CreatePidFile(fileName)
 
   private def deletePidFile(file: Path): Unit =

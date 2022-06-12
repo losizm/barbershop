@@ -6,7 +6,7 @@ maintainer   := "carlos.conyers@hotmail.com"
 
 versionScheme := Some("early-semver")
 
-scalaVersion  := "3.1.0"
+scalaVersion  := "3.1.2"
 scalacOptions := Seq("-deprecation", "-feature", "-new-syntax", "-Werror", "-Yno-experimental")
 
 Compile / doc / scalacOptions := Seq(
@@ -16,13 +16,13 @@ Compile / doc / scalacOptions := Seq(
 )
 
 libraryDependencies := Seq(
-  "ch.qos.logback"    %  "logback-classic" % "1.2.6",
-  "com.github.losizm" %% "grapple"         % "11.0.0",
+  "ch.qos.logback"    %  "logback-classic" % "1.2.11",
+  "com.github.losizm" %% "grapple"         % "12.0.0",
   "com.github.losizm" %% "little-config"   % "3.0.0",
   "com.github.losizm" %% "little-io"       % "8.0.0",
-  "com.github.losizm" %% "scamper"         % "32.1.2",
+  "com.github.losizm" %% "scamper"         % "33.0.0",
   "com.typesafe"      %  "config"          % "1.4.1",
-  "org.scalatest"     %% "scalatest"       % "3.2.10" % Test
+  "org.scalatest"     %% "scalatest"       % "3.2.12" % Test
 )
 
 enablePlugins(JavaAppPackaging)

@@ -17,7 +17,6 @@ package barbershop
 package web
 
 import barbershop.comments.{ *, given }
-import barbershop.logging.Logger
 
 import com.typesafe.config.Config
 
@@ -46,7 +45,7 @@ class Api(config: Config) extends RouterApplication:
   /** Creates web API with default configuration. */
   def this() = this(config.getConfig("barbershop.api"))
 
-  private val logger   = Logger("barbershop.web.Api")
+  private val logger   = org.slf4j.LoggerFactory.getLogger("barbershop.web.Api")
   private val comments = CommentStore()
   private val file     = config.getOption[Path]("comment.file")
 

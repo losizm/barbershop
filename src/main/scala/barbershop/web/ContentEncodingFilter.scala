@@ -16,8 +16,6 @@
 package barbershop
 package web
 
-import barbershop.logging.Logger
-
 import scamper.http.{ HttpRequest, HttpResponse }
 import scamper.http.headers.{ AcceptEncoding, TransferEncoding }
 import scamper.http.server.{ ResponseFilter, ServerHttpResponse }
